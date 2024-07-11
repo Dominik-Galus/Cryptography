@@ -9,7 +9,7 @@ class N_Field(N_Ring):
             raise TypeError("To create a field parse a prime argument")
         
     def division(self, a: int, b: int) -> int:
-        b_inverse = self.mult_inverse(b)
+        b_inverse: int = self.mult_inverse(b)
         return self.multiplication(a, b_inverse)
         
         
