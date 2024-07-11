@@ -2,7 +2,7 @@
 class N_Group:
     
     def __init__(self, mod: int) -> None:
-        if self.mod < 0:
+        if mod < 0:
             raise ValueError("Modulo must be positive")
         self.mod = mod
         self.group_elements = list(range(mod))
