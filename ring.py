@@ -3,7 +3,7 @@ from group import N_Group
 class N_Ring(N_Group):
     
     def __init__(self, mod: int) -> None:
-        super(N_Ring, self).__init__(mod)
+        super().__init__(mod)
         self.i = 1
         
     def mult_inverse(self, value: int) -> int:
@@ -15,10 +15,10 @@ class N_Ring(N_Group):
                 return elem
         return None
     
-    def multiplication(self, *args: int) -> int:
-        result: int = args[0]
-        for arg in args[1:]:
-            result = (result * arg) % self.mod
+    def multiplication(self, values: list[int]) -> int:
+        result: int = values[0]
+        for value in values[1:]:
+            result = (result * value) % self.mod
         if result < 0:
             result += self.mod
         return result
@@ -27,11 +27,11 @@ class N_Ring(N_Group):
         result: int = values[0]
         for i, op in enumerate(operations):
             if op == "add":
-                result = self.add(result, values[i+1])
+                result = self.add([result, values[i+1]])
             else:
-                result = self.multiplication(result, values[i+1])
+                result = self.multiplication([result, values[i+1]])
         return result
-                
+    
 
 Z_5 = N_Ring(5)
 

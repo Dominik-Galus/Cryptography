@@ -17,20 +17,21 @@ class N_Group:
                 return elem
         return None
             
-    def add(self, *args: int) -> int:
-        result: int = args[0]
-        for arg in args[1:]:
-            result = (result + arg) % self.mod
+    def add(self, values: list[int]) -> int:
+        result: int = values[0]
+        for value in values[1:]:
+            result = (result + value) % self.mod
         if result < 0:
             result += self.mod
         return result
     
     
+    
 C_5 = N_Group(5)
 
-assert C_5.add(10, 17, 21) == 3
-assert C_5.add(-14, -16, - 7) == 3
+assert C_5.add([10, 17, 21]) == 3
+assert C_5.add([-14, -16, -7]) == 3
 assert C_5.additive_inverse(-3) == 3
 assert C_5.additive_inverse(-16) == 1
-assert C_5.add(1,2,3,4,5) == 0
+assert C_5.add([1,2,3,4,5]) == 0
 assert C_5.additive_inverse(3) == 2
