@@ -15,7 +15,7 @@ class Number:
     
     def __mul__(self, other: "Number") -> "Number":
         if self.restriction.ring_modulo() != other.restriction.ring_modulo():
-            raise ValueError("Numbers can be added with the same restriction")
+            raise ValueError("Numbers can be multipilied with the same restriction")
         return Number(self.restriction.mult(
             self.value, other.value
         ), self.restriction)
