@@ -25,6 +25,9 @@ class N_Group:
             result += self.mod
         return result
     
+    def is_element(self, value: int) -> bool:
+        return value in self.group_elements
+    
     
     
 C_5 = N_Group(5)
