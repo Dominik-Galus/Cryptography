@@ -33,14 +33,15 @@ class Group(Restriction):
         return value
 
     def mul(self, value1: int, value2: int) -> int:
-        return NotImplemented
+        raise NotImplementedError()
 
     def modulo(self) -> int:
         return self.mod
 
 
-g = Group(7)
+if __name__ == "__main__":
+    g = Group(7)
 
-assert g.add(3, 4) == 0
-assert g.check(13) == 6
-assert g.additive_inverse(4) == 3
+    assert g.add(3, 4) == 0
+    assert g.check(13) == 6
+    assert g.additive_inverse(4) == 3

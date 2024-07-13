@@ -18,14 +18,13 @@ class Ring(Group):
 
     def mul(self, value1: int, value2: int) -> int:
         result: int = (value1 * value2) % self.mod
-        if result < 0:
-            result += self.mod
+        result = result + self.mod if result < 0 else result
         return result
 
-
-r = Ring(5)
-assert r.add(3, 4) == 2
-assert r.check(13) == 3
-assert r.mul(2, 4) == 3
-assert r.additive_inverse(3) == 2
-assert r.mult_inverse(2) == 3
+if __name__ == "__main__":
+    r = Ring(5)
+    assert r.add(3, 4) == 2
+    assert r.check(13) == 3
+    assert r.mul(2, 4) == 3
+    assert r.additive_inverse(3) == 2
+    assert r.mult_inverse(2) == 3
