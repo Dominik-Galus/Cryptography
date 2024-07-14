@@ -7,17 +7,14 @@ class Group(Restriction):
         if mod < 0:
             raise ValueError("Modulo must be positive")
         self.mod = mod
-        self.group_elements = list(range(mod))
         self.e = 0
 
     def additive_inverse(self, value: int) -> int:
+        value = value % self.mod
         if value < 0:
-            value = value % self.mod
             value += self.mod
-        for elem in self.group_elements:
-            if (value + elem) % self.mod == self.e:
-                return elem
-        return None
+        inverse: int = self.mod - value
+        return inverse
 
     def add(self, value1: int, value2: int) -> int:
         result: int = (value1 + value2) % self.mod
@@ -26,10 +23,11 @@ class Group(Restriction):
         return result
 
     def check(self, value: int) -> int:
-        if not value in self.group_elements:
+        if value >= self.mod:
             value = value % self.mod
-            if value < 0:
-                value += self.mod
+        elif value < 0:
+            value = value % self.mod
+            value += self.mod
         return value
 
     def mul(self, value1: int, value2: int) -> int:
