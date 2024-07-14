@@ -1,4 +1,4 @@
-from random import randint, getrandbits
+from random import getrandbits, randint
 
 
 def is_prime(value: int, k: int = 1000) -> bool:
@@ -6,7 +6,7 @@ def is_prime(value: int, k: int = 1000) -> bool:
         return False
     elif value == 2 or value == 3:
         return True
-    
+
     else:
         for i in range(k):
             a = randint(2, value - 2)
@@ -41,4 +41,3 @@ if __name__ == "__main__":
     a = getrandbits(1024)
     print(a)
     print(is_prime(a, k=1000))
-    

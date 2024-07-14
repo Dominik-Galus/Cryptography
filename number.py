@@ -1,8 +1,8 @@
 from typing import Self
 
+from restrictions.group import Group
 from restrictions.restriction import Restriction
 from restrictions.ring import Ring
-from restrictions.group import Group
 
 
 class Number:
@@ -17,7 +17,9 @@ class Number:
             type(self.restriction) == type(other.restriction)
             and self.restriction.modulo() == other.restriction.modulo()
         ):
-            return Number(self.restriction.add(self.value, other.value), self.restriction)
+            return Number(
+                self.restriction.add(self.value, other.value), self.restriction
+            )
         else:
             raise ValueError("Numbers can be added only with the same restriction")
 
@@ -28,12 +30,15 @@ class Number:
             type(self.restriction) == type(other.restriction)
             and self.restriction.modulo() == other.restriction.modulo()
         ):
-            return Number(self.restriction.mul(self.value, other.value), self.restriction)
+            return Number(
+                self.restriction.mul(self.value, other.value), self.restriction
+            )
         else:
             raise ValueError("Numbers can be multiplied only with the same restriction")
-    
+
     __radd__ = __add__
     __rmul__ = __mul__
+
 
 if __name__ == "__main__":
     n1 = Number(3, Ring(5))
@@ -58,10 +63,9 @@ if __name__ == "__main__":
 
     n10 = 2 + n1
     assert n10.value == 0
-    
+
     n11 = Number(3, Group(5))
     try:
         n12 = n9 * n11
     except ValueError as e:
         print(e)
-    

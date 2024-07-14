@@ -1,6 +1,6 @@
-from restrictions.group import Group
 from math import gcd
 
+from restrictions.group import Group
 
 
 class Ring(Group):
@@ -16,7 +16,7 @@ class Ring(Group):
         q: int = int(temp_mod / value)
         r: int = temp_mod % value
         t1: int = 0
-        t2:int = 1
+        t2: int = 1
         t3: int = t1 - (q * t2)
         while r != 0:
             temp_mod = value
@@ -30,12 +30,12 @@ class Ring(Group):
         if t2 < 0:
             t2 += self.mod
         return t2
-        
 
     def mul(self, value1: int, value2: int) -> int:
         result: int = (value1 * value2) % self.mod
         result = result + self.mod if result < 0 else result
         return result
+
 
 if __name__ == "__main__":
     r = Ring(5)
