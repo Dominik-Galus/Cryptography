@@ -15,15 +15,6 @@ def is_prime(value: int, k: int = 1000) -> bool:
     return True
 
 
-# def exp_by_squaring(value: int, factor: int) -> int:
-#     exp: str = bin(factor)
-#     x: int = value
-#     for i in range(3, len(exp)):
-#         x = x * x
-#         if(exp[i:i+1] == "1"):
-#             x = x * value
-#     return x
-
 if __name__ == "__main__":
     assert is_prime(11) == True
     assert is_prime(15) == False
