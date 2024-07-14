@@ -28,12 +28,13 @@ class RSA:
         self.phi: int = lcm(self.p - 1, self.q - 1)
         self.ring = Ring(self.phi)
 
-        temp: int = randrange(1, self.phi)
-        e = Number(temp, self.ring)
-        g = gcd(e.value, self.phi)
+        candidate: int = randrange(1, self.phi)
+        e = Number(candidate, self.ring)
+        g = e.gcd(self.phi)
         while g != 1:
-            e.value = randrange(1, self.phi)
-            g = gcd(e.value, self.phi)
+            candidate = randrange(1, self.phi)
+            e = Number(candidate, self.ring)
+            g = e.gcd(self.phi)
 
         temp = self.ring.mult_inverse(e.value)
         d = Number(temp, self.ring)

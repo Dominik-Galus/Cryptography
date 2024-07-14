@@ -1,5 +1,5 @@
 from typing import Self
-
+from math import gcd
 from restrictions.group import Group
 from restrictions.restriction import Restriction
 from restrictions.ring import Ring
@@ -35,6 +35,9 @@ class Number:
             )
         else:
             raise ValueError("Numbers can be multiplied only with the same restriction")
+        
+    def gcd(self, number: int) -> int:
+        return gcd(self.value, number)
 
     __radd__ = __add__
     __rmul__ = __mul__
