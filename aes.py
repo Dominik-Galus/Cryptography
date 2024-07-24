@@ -22,10 +22,9 @@ class AES:
         bytes_length: int = bits // 8
         if bits % 8 != 0:
             bytes_length += 1
-        # self.hex_key: str = "".join(
-        #     random.choice("0123456789abcdef") for _ in range(bytes_length * 2)
-        # )
-        self.hex_key = "2b7e151628aed2a6abf7158809cf4f3c"
+        self.hex_key: str = "".join(
+            random.choice("0123456789abcdef") for _ in range(bytes_length * 2)
+        )
         byte_array = np.array(
             [int(self.hex_key[i : i + 2], 16) for i in range(0, len(self.hex_key), 2)]
         )
