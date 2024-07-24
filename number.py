@@ -1,5 +1,6 @@
-from typing import Self
 from math import gcd
+from typing import Self
+
 from restrictions.group import Group
 from restrictions.restriction import Restriction
 from restrictions.ring import Ring
