@@ -163,4 +163,4 @@ cython_debug/
 
 .env
 __pycache__
-
+new_env

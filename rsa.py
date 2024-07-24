@@ -1,8 +1,8 @@
-from math import gcd, lcm
+from math import lcm
 from random import randrange
 
 from number import Number
-from pure import *
+from pure import is_prime
 from restrictions.ring import Ring
 
 
@@ -58,4 +58,7 @@ if __name__ == "__main__":
     s1: str = r.encrypt("Hello")
     assert r.decrypt(s1) == "Hello"
     s2: str = r.encrypt("Welcome to my kitchen")
+    print(r.private_key)
+    print("***********************************************************")
+    print(r.public_key)
     assert r.decrypt(s2) == "Welcome to my kitchen"
