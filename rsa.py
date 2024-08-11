@@ -18,7 +18,7 @@ class RSA:
         cipher = pow(int(plain_text), num_obj.value, n)
         return cipher
 
-    def decrypt(self, cipher_text: list[int]) -> int:
+    def decrypt(self, cipher_text: list[int]) -> list[int]:
         num_obj, n = self.private_key
         decrypted_numbers = [pow(char, num_obj.value, n) for char in cipher_text]
         return decrypted_numbers
