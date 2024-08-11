@@ -1,5 +1,6 @@
 from math import lcm
 from random import randrange
+import numpy as np
 
 from number import Number
 from pure import is_prime
@@ -12,16 +13,15 @@ class RSA:
         self.n = self.generate_n(bits)
         self.public_key, self.private_key = self.generate_keys()
 
-    def encrypt(self, plain_text: str) -> list[int]:
-        num_obj, _ = self.public_key
-        cipher = [pow(ord(char), num_obj.value, self.n) for char in plain_text]
+    def encrypt(self, plain_text: str) -> int:
+        num_obj, n = self.public_key
+        cipher = pow(int(plain_text), num_obj.value, n)
         return cipher
 
-    def decrypt(self, cipher_text: str) -> int:
-        num_obj, _ = self.private_key
-        temp = [str(pow(int(char), num_obj.value, self.n)) for char in cipher_text]
-        plain = [chr(int(char)) for char in temp]
-        return "".join(plain)
+    def decrypt(self, cipher_text: list[int]) -> int:
+        num_obj, n = self.private_key
+        decrypted_numbers = [pow(char, num_obj.value, n) for char in cipher_text]
+        return decrypted_numbers
 
     def generate_keys(self) -> tuple[tuple[Number, int]]:
 
@@ -54,11 +54,32 @@ class RSA:
 
 
 if __name__ == "__main__":
-    r = RSA(2048)
-    s1: str = r.encrypt("Hello")
-    assert r.decrypt(s1) == "Hello"
-    s2: str = r.encrypt("Welcome to my kitchen")
+    r = RSA(1024)
     print(r.private_key)
-    print("***********************************************************")
     print(r.public_key)
-    assert r.decrypt(s2) == "Welcome to my kitchen"
+    xd = np.array([[ 60,  16, 201, 179],
+                    [ 53, 107, 179,  22],
+                    [ 60,  70, 202,  47],
+                    [139,  10, 244,  15]])
+    print(xd)
+    print(xd.size)
+    print("***********************************************************************")
+    encrypted_aes_key = [
+            r.encrypt(str(byte)) for byte in xd.flatten()
+        ]
+    print(encrypted_aes_key)
+    print(len(encrypted_aes_key))
+    print("***********************************************************************")
+    
+    decrypted_integers = r.decrypt(encrypted_aes_key)  # List of decrypted integers
+    aes_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4,4)
+    print(decrypted_integers)
+    print(aes_key)
+    # decrypted_bytes = []
+    # for decrypted_int in decrypted_integers:
+    #     decrypted_byte = decrypted_int & 0xFF  # Extract the least significant byte
+    #     decrypted_bytes.append(decrypted_byte)
+
+    # aes_key = np.array(decrypted_bytes, dtype=np.uint8).reshape(4, 4)
+    # print(aes_key)
+    # print(aes_key.size)

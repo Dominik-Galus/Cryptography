@@ -6,10 +6,15 @@ from pure import inv_s_box, rcon, s_box
 
 
 class AES:
-    def __init__(self, bits: int) -> None:
+    def __init__(self, bits: int, aes_key: np.ndarray = None) -> None:
+        if bits not in [128, 192, 256]:
+            raise ValueError("Wrong bits key length")
         self.key_columns: int = bits // 32
         self.rounds: int = {128: 10, 192: 12, 256: 14}[bits]
-        self.generate_key(bits)
+        if aes_key is not None:
+            self.key = aes_key
+        else:
+            self.key = self.generate_key(bits)
         self.key_expansion()
 
     def rot_word(self, word: np.ndarray) -> np.ndarray:
@@ -18,18 +23,18 @@ class AES:
     def sub_word(self, word: np.ndarray) -> np.ndarray:
         return s_box[word // 16, word % 16]
 
-    def generate_key(self, bits: int) -> None:
+    def generate_key(self, bits: int) -> np.ndarray:
         bytes_length: int = bits // 8
         if bits % 8 != 0:
             bytes_length += 1
-        self.hex_key: str = "".join(
+        hex_key: str = "".join(
             random.choice("0123456789abcdef") for _ in range(bytes_length * 2)
         )
         byte_array = np.array(
-            [int(self.hex_key[i : i + 2], 16) for i in range(0, len(self.hex_key), 2)]
+            [int(hex_key[i : i + 2], 16) for i in range(0, len(hex_key), 2)]
         )
         matrix = np.array([byte_array[i : i + 4] for i in range(0, len(byte_array), 4)])
-        self.key = matrix.T
+        return matrix.T
 
     def key_expansion(self) -> None:
         self.expanded_key: np.ndarray = np.zeros(
@@ -57,8 +62,9 @@ class AES:
         return state
 
     def int_matrix_to_hex_matrix(self, matrix) -> np.ndarray:
-        hex_matrix = [[f"{num:02x}" for num in row] for row in matrix]
+        hex_matrix = np.array([[f"{num:02x}" for num in row] for row in matrix])
         return hex_matrix
+    
 
     def sub_bytes(self) -> None:
         self.state = s_box[self.state // 16, self.state % 16]
@@ -104,7 +110,7 @@ class AES:
     def add_round_key(self, round: int) -> None:
         self.state ^= self.expanded_key[round * 4 : (round + 1) * 4].T
 
-    def encrypt(self, message: str) -> np.ndarray:
+    def encrypt(self, message: str) -> str:
         self.state: np.ndarray = self.aes_state(message)
         self.add_round_key(0)
 
@@ -118,9 +124,10 @@ class AES:
         self.shift_rows()
         self.add_round_key(self.rounds)
 
-        self.hex_state = self.int_matrix_to_hex_matrix(self.state)
+        
+        hex_string = ''.join([f"{num:02x}" for num in self.state.T.flatten()])
 
-        return self.state
+        return hex_string
 
     def inv_mix_columns(self) -> None:
         for i in range(4):
@@ -151,7 +158,11 @@ class AES:
     def inv_sub_bytes(self) -> None:
         self.state = inv_s_box[self.state // 16, self.state % 16]
 
-    def decrypt(self) -> np.ndarray:
+    def decrypt(self, encrypted_message: str) -> str:
+        byte_array = np.array([int(encrypted_message[i:i+2], 16) for i in range(0, len(encrypted_message), 2)], dtype=np.uint8)
+        self.state = byte_array.reshape(4, 4).T
+
+        # Perform the decryption steps
         self.add_round_key(self.rounds)
 
         for round in range(self.rounds - 1, 0, -1):
@@ -163,15 +174,21 @@ class AES:
         self.inv_shift_rows()
         self.inv_sub_bytes()
         self.add_round_key(0)
+        
+        # Convert the byte array back into a string
+        decrypted_text = ''.join([chr(byte) for byte in self.state.T.flatten()])
 
-        return self.state
+        # Strip padding if added during encryption
+        decrypted_text = decrypted_text.rstrip()
+        
+        return decrypted_text
 
 
 if __name__ == "__main__":
-    aes = AES(128)
-    encrypted = aes.encrypt("theblockbreakers")
-    print(aes.state)
-    print(encrypted)
-    print(aes.hex_state)
-    decrypted = aes.decrypt()
-    print(decrypted)
+    aes1 = AES(128)
+    aes2 = AES(128, aes_key=aes1.key)
+    encrypted = aes1.encrypt("Tajna wiadomosc")
+    decrypted = aes2.decrypt(encrypted)
+    
+    print(f"Encrypted: {encrypted}")
+    print(f"Decrypted: {decrypted}")
