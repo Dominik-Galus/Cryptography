@@ -89,17 +89,6 @@ if __name__ == "__main__":
     print("******************************************************************")
 
     
-    # server1.load_keys("1")
-    # server2.load_keys("2")
-    print("Server1")
-    print(server1.rsa_public_key)
-    print(server1.rsa_private_key)
-    print("Server2")
-    print(server2.rsa_public_key)
-    print(server2.rsa_private_key)
-    
-    print("******************************************************************")
-    
     
     
     
