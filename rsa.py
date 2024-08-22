@@ -14,16 +14,26 @@ class RSA:
         self.public_key, self.private_key = self.generate_keys()
 
     def encrypt(self, plain_text: str) -> int:
-        num_obj, n = self.public_key
-        cipher = pow(int(plain_text), num_obj.value, n)
+        e, n = self.public_key
+        cipher = pow(int(plain_text), e, n)
         return cipher
 
     def decrypt(self, cipher_text: list[int]) -> list[int]:
-        num_obj, n = self.private_key
-        decrypted_numbers = [pow(char, num_obj.value, n) for char in cipher_text]
+        d, n = self.private_key
+        decrypted_numbers = [pow(char, d, n) for char in cipher_text]
+        return decrypted_numbers
+    
+    @staticmethod
+    def encrypt_with_known_key(plain_text: str, public_key: tuple[int, int]) -> int:
+        cipher: int = pow(int(plain_text), public_key[0], public_key[1])
+        return cipher
+    
+    @staticmethod
+    def decrypt_with_known_key(cipher_text: list[int], private_key: tuple[int, int]) -> list[int]:
+        decrypted_numbers: list[int] = [pow(char, private_key[0], private_key[1]) for char in cipher_text]
         return decrypted_numbers
 
-    def generate_keys(self) -> tuple[tuple[Number, int]]:
+    def generate_keys(self) -> tuple[tuple[int, int]]:
 
         self.phi: int = lcm(self.p - 1, self.q - 1)
         self.ring = Ring(self.phi)
@@ -39,7 +49,7 @@ class RSA:
         temp = self.ring.mult_inverse(e.value)
         d = Number(temp, self.ring)
 
-        return ((e, self.n), (d, self.n))
+        return ((e.value, self.n), (d.value, self.n))
 
     def generate_n(self, bits: int) -> int:
         self.p: int = self.generate_large_prime(int(bits / 2))
@@ -55,31 +65,33 @@ class RSA:
 
 if __name__ == "__main__":
     r = RSA(1024)
-    print(r.private_key)
-    print(r.public_key)
+    print(r.phi)
+    print("******************")
+    print(r.public_key[0])
+    print("***************************")
+    print(r.public_key[1])
+    print("***************************************************************")
+    print(r.private_key[0])
+    print("**********************")
+    print(r.private_key[1])
     xd = np.array([[ 60,  16, 201, 179],
                     [ 53, 107, 179,  22],
                     [ 60,  70, 202,  47],
                     [139,  10, 244,  15]])
-    print(xd)
-    print(xd.size)
-    print("***********************************************************************")
     encrypted_aes_key = [
             r.encrypt(str(byte)) for byte in xd.flatten()
         ]
-    print(encrypted_aes_key)
-    print(len(encrypted_aes_key))
-    print("***********************************************************************")
     
     decrypted_integers = r.decrypt(encrypted_aes_key)  # List of decrypted integers
     aes_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4,4)
-    print(decrypted_integers)
-    print(aes_key)
-    # decrypted_bytes = []
-    # for decrypted_int in decrypted_integers:
-    #     decrypted_byte = decrypted_int & 0xFF  # Extract the least significant byte
-    #     decrypted_bytes.append(decrypted_byte)
-
-    # aes_key = np.array(decrypted_bytes, dtype=np.uint8).reshape(4, 4)
-    # print(aes_key)
-    # print(aes_key.size)
+    
+    assert xd.all() == aes_key.all()
+    
+    encrypted_aes_key = [
+        RSA.encrypt_with_known_key(str(byte), r.public_key) for byte in xd.flatten()
+    ]
+    
+    decrypted_integers = RSA.decrypt_with_known_key(encrypted_aes_key, r.private_key)
+    aes_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4,4)
+    
+    assert xd.all() == aes_key.all()

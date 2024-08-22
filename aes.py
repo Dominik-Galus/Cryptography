@@ -6,7 +6,7 @@ from pure import inv_s_box, rcon, s_box
 
 
 class AES:
-    def __init__(self, bits: int, aes_key: np.ndarray = None) -> None:
+    def __init__(self, bits: int, aes_key: np.ndarray | None = None) -> None:
         if bits not in [128, 192, 256]:
             raise ValueError("Wrong bits key length")
         self.key_columns: int = bits // 32
@@ -190,5 +190,4 @@ if __name__ == "__main__":
     encrypted = aes1.encrypt("Tajna wiadomosc")
     decrypted = aes2.decrypt(encrypted)
     
-    print(f"Encrypted: {encrypted}")
-    print(f"Decrypted: {decrypted}")
+    assert decrypted == "Tajna wiadomosc"
