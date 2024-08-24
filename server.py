@@ -37,19 +37,17 @@ class Server:
         return encrypted_aes_key
     
     def load_keys(self, key_file_number: str):
-        f = open(f"rsa_public_key_{key_file_number}.txt", "r")
-        keys: str = f.read().split()
-        e: int = int(keys[0])
-        n: int = int(keys[1])
-        self.rsa_public_key = (e, n)
-        f.close()
+        with open(f"rsa_public_key_{key_file_number}.txt", "r") as key_file:
+            keys: list[str] = key_file.read().split()
+            e: int = int(keys[0])
+            n: int = int(keys[1])
+            self.rsa_public_key = (e, n)
         
-        f = open(f"rsa_private_key_{key_file_number}.txt", "r")
-        keys: str = f.read().split()
-        e: int = int(keys[0])
-        n: int = int(keys[1])
-        self.rsa_private_key = (e, n)
-        f.close()
+        with open(f"rsa_private_key_{key_file_number}.txt", "r") as key_file:
+            keys: list[str] = key_file.read().split()
+            d: int = int(keys[0])
+            n: int = int(keys[1])
+            self.rsa_private_key = (d, n)
         
         
     
