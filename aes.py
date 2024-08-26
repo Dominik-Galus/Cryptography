@@ -162,7 +162,6 @@ class AES:
         byte_array = np.array([int(encrypted_message[i:i+2], 16) for i in range(0, len(encrypted_message), 2)], dtype=np.uint8)
         self.state = byte_array.reshape(4, 4).T
 
-        # Perform the decryption steps
         self.add_round_key(self.rounds)
 
         for round in range(self.rounds - 1, 0, -1):
@@ -175,10 +174,7 @@ class AES:
         self.inv_sub_bytes()
         self.add_round_key(0)
         
-        # Convert the byte array back into a string
         decrypted_text = ''.join([chr(byte) for byte in self.state.T.flatten()])
-
-        # Strip padding if added during encryption
         decrypted_text = decrypted_text.rstrip()
         
         return decrypted_text
