@@ -14,8 +14,8 @@ class Server:
         
     def generate_rsa_keys(self) -> None:
         rsa = RSA(1024)
-        self.rsa_public_key = rsa.public_key
-        self.rsa_private_key = rsa.private_key
+        self.rsa_public_key: tuple[int, int] = rsa.public_key
+        self.rsa_private_key: tuple[int, int] = rsa.private_key
         
     def generate_aes_key(self) -> np.ndarray:
         aes = AES(128)
@@ -36,18 +36,18 @@ class Server:
         
         return encrypted_aes_key
     
-    def load_keys(self, key_file_number: str):
+    def load_keys(self, key_file_number: str) -> None:
         with open(f"rsa_public_key_{key_file_number}.txt", "r") as key_file:
             keys: list[str] = key_file.read().split()
             e: int = int(keys[0])
             n: int = int(keys[1])
-            self.rsa_public_key = (e, n)
+            self.rsa_public_key: tuple[int, int] = (e, n)
         
         with open(f"rsa_private_key_{key_file_number}.txt", "r") as key_file:
             keys: list[str] = key_file.read().split()
             d: int = int(keys[0])
             n: int = int(keys[1])
-            self.rsa_private_key = (d, n)
+            self.rsa_private_key: tuple[int, int] = (d, n)
         
         
     
