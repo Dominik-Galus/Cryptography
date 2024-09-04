@@ -2,35 +2,38 @@ from math import lcm
 from random import randrange
 import numpy as np
 
+from asymmetric import Asymmetric
 from number import Number
 from pure import is_prime
 from restrictions.ring import Ring
 
 
-class RSA:
+class RSA(Asymmetric):
 
     def __init__(self, bits: int) -> None:
         self.n = self.generate_n(bits)
-        self.public_key, self.private_key = self.generate_keys()
+        self._public_key, self._private_key = self.generate_keys()
 
-    def encrypt(self, plain_text: str) -> int:
+    def encrypt(self, message: str) -> int:
         e, n = self.public_key
-        cipher = pow(int(plain_text), e, n)
+        cipher = pow(int(message), e, n)
         return cipher
 
-    def decrypt(self, cipher_text: list[int]) -> list[int]:
+    def decrypt(self, encrypted_message: list[int]) -> list[int]:
         d, n = self.private_key
-        decrypted_numbers = [pow(char, d, n) for char in cipher_text]
+        decrypted_numbers = [pow(char, d, n) for char in encrypted_message]
         return decrypted_numbers
-    
+
     @staticmethod
-    def encrypt_with_known_key(plain_text: str, public_key: tuple[int, int]) -> int:
-        cipher: int = pow(int(plain_text), public_key[0], public_key[1])
+    def encrypt_with_known_key(message: str, public_key: tuple[int, int]) -> int:
+        cipher: int = pow(int(message), public_key[0], public_key[1])
         return cipher
-    
+
     @staticmethod
-    def decrypt_with_known_key(cipher_text: list[int], private_key: tuple[int, int]) -> list[int]:
-        decrypted_numbers: list[int] = [pow(char, private_key[0], private_key[1]) for char in cipher_text]
+    def decrypt_with_known_key(encrypted_message: list[int], private_key: tuple[int, int]) -> list[int]:
+        decrypted_numbers: list[int] = [
+            pow(char, private_key[0], private_key[1]) for char in encrypted_message
+        ]
         return decrypted_numbers
 
     def generate_keys(self) -> tuple[tuple[int, int]]:
@@ -61,37 +64,37 @@ class RSA:
         while not is_prime(p):
             p = randrange((2 ** (bits - 1)) + 1, (2**bits) - 1)
         return p
+    
+    @property
+    def private_key(self):
+        return self._private_key
+    
+    @property
+    def public_key(self):
+        return self._public_key
+    
+    @staticmethod
+    def load_from_file(content: list[str]) -> tuple[int, int]:
+        return (int(content[0]), int(content[1]))
 
 
 if __name__ == "__main__":
     r = RSA(1024)
-    print(r.phi)
-    print("******************")
-    print(r.public_key[0])
-    print("***************************")
-    print(r.public_key[1])
-    print("***************************************************************")
-    print(r.private_key[0])
-    print("**********************")
-    print(r.private_key[1])
-    xd = np.array([[ 60,  16, 201, 179],
-                    [ 53, 107, 179,  22],
-                    [ 60,  70, 202,  47],
-                    [139,  10, 244,  15]])
-    encrypted_aes_key = [
-            r.encrypt(str(byte)) for byte in xd.flatten()
-        ]
-    
+    xd = np.array(
+        [[60, 16, 201, 179], [53, 107, 179, 22], [60, 70, 202, 47], [139, 10, 244, 15]]
+    )
+    encrypted_aes_key = [r.encrypt(str(byte)) for byte in xd.flatten()]
+
     decrypted_integers = r.decrypt(encrypted_aes_key)  # List of decrypted integers
-    aes_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4,4)
-    
+    aes_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4, 4)
+
     assert xd.all() == aes_key.all()
-    
+
     encrypted_aes_key = [
         RSA.encrypt_with_known_key(str(byte), r.public_key) for byte in xd.flatten()
     ]
-    
+
     decrypted_integers = RSA.decrypt_with_known_key(encrypted_aes_key, r.private_key)
-    aes_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4,4)
-    
+    aes_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4, 4)
+
     assert xd.all() == aes_key.all()

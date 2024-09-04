@@ -3,18 +3,19 @@ import random
 import numpy as np
 
 from pure import inv_s_box, rcon, s_box
+from symmetric import Symmetric
 
 
-class AES:
+class AES(Symmetric):
     def __init__(self, bits: int, aes_key: np.ndarray | None = None) -> None:
         if bits not in [128, 192, 256]:
             raise ValueError("Wrong bits key length")
         self.key_columns: int = bits // 32
         self.rounds: int = {128: 10, 192: 12, 256: 14}[bits]
         if aes_key is not None:
-            self.key = aes_key
+            self._key = aes_key
         else:
-            self.key = self.generate_key(bits)
+            self._key = self.generate_key(bits)
         self.key_expansion()
 
     def rot_word(self, word: np.ndarray) -> np.ndarray:
@@ -178,7 +179,11 @@ class AES:
         decrypted_text = decrypted_text.rstrip()
         
         return decrypted_text
-
+    
+    @property
+    def key(self):
+        return self._key
+    
 
 if __name__ == "__main__":
     aes1 = AES(128)
