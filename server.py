@@ -30,7 +30,7 @@ class Server:
         self.asymmetric_private_key: tuple[int, int] = asymmetric.private_key
 
     def generate_symmetric_key(self) -> np.ndarray:
-        symmetric = SymmetricKeyFactory.create_key(self.symmetric_key_type, self.symmetric_bits)
+        symmetric = SymmetricKeyFactory.create_key(self.symmetric_key_type, self.symmetric_bits, None)
         return symmetric.key
 
     def add_session(self, session: "Session") -> None:
@@ -46,7 +46,7 @@ class Server:
             for byte in symmetric_key.flatten()
         ]
 
-        session = Session(symmetric_key, self.asymmetric_public_key)
+        session = Session(self.symmetric_key_type, symmetric_key, self.symmetric_bits, self.asymmetric_public_key)
         self.add_session(session)
 
         return encrypted_symmetric_key
@@ -76,7 +76,7 @@ class Server:
 
         symmetric_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4, 4)
 
-        session = Session(symmetric_key, self.asymmetric_public_key)
+        session = Session(self.symmetric_key_type, symmetric_key, self.symmetric_bits, self.asymmetric_public_key)
         self.add_session(session)
 
         return symmetric_key

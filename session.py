@@ -1,16 +1,20 @@
 import numpy as np
 from aes import AES
+from symmetric import Symmetric
+from symmetrickeyfactory import SymmetricKeyFactory
 
 
 class Session:
-    def __init__(self, aes_key: np.ndarray, server_id: int) -> None:
-        self.aes_key: np.ndarray = aes_key
+    def __init__(self, symmetric_type: Symmetric, symmetric_key, bits: int, server_id: int) -> None:
+        self.symmetric_key: Symmetric = symmetric_key
+        self.bits = bits
+        self.symmetric_type = symmetric_type
         self.id: int = server_id
 
     def encrypt_data(self, data: str) -> str:
-        aes = AES(128, aes_key=self.aes_key)
-        return aes.encrypt(data)
+        symmetric_key = SymmetricKeyFactory.create_key(self.symmetric_type, self.bits, self.symmetric_key)
+        return symmetric_key.encrypt(data)
 
     def decrypt_data(self, data):
-        aes = AES(128, aes_key=self.aes_key)
-        return aes.decrypt(data)
+        symmetric_key = SymmetricKeyFactory.create_key(self.symmetric_type, self.bits, self.symmetric_key)
+        return symmetric_key.decrypt(data)

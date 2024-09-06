@@ -186,7 +186,7 @@ class AES(Symmetric):
     
 
 if __name__ == "__main__":
-    aes1 = AES(128)
+    aes1 = AES(128, aes_key=None)
     aes2 = AES(128, aes_key=aes1.key)
     encrypted = aes1.encrypt("Tajna wiadomosc")
     decrypted = aes2.decrypt(encrypted)

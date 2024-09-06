@@ -10,9 +10,13 @@ class AsymmetricKeyFactory(KeyFactory):
     
     @staticmethod
     def create_key(key_type: str, bits: int) -> Asymmetric:
-        key_class = AsymmetricKeyFactory.key_type_map[key_type]
-        return key_class(bits)
+        if key_type in AsymmetricKeyFactory.key_type_map:
+            asymmetric_key = AsymmetricKeyFactory.key_type_map[key_type]
+            return asymmetric_key(bits)
+        raise TypeError("Invalid Asymmetric Key")
     
     @staticmethod
     def get_key(key_type: str):
-        return AsymmetricKeyFactory.key_type_map[key_type]
+        if key_type in AsymmetricKeyFactory.key_type_map:
+            return AsymmetricKeyFactory.key_type_map[key_type]
+        raise TypeError("Invallid Asymmetric Key")
