@@ -54,7 +54,7 @@ class Server:
     def load_keys(self, key_file_number: str) -> None:
         asymmetric_key = AsymmetricKeyFactory.get_key(self.asymmetric_key_type)
         with open(f"asymmetric_public_key_{key_file_number}.txt", "r") as key_file:
-            self.asymmetric_public_key: tuple[int, int] = asymmetric_key.load_from_file(content=key_file.read())
+            self.asymmetric_public_key = asymmetric_key.load_from_file(content=key_file.read())
 
         with open(f"asymmetric_private_key_{key_file_number}.txt", "r") as key_file:
             self.asymmetric_private_key = asymmetric_key.load_from_file(content=key_file.read())
