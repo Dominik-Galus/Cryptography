@@ -1,11 +1,10 @@
-from typing import Self
-
-import numpy as np
-
-from asymmetrickeyfactory import AsymmetricKeyFactory
 from session import Session
+import numpy as np
+from symmetric import Symmetric
+from asymmetric import Asymmetric
+from typing import Self
+from asymmetrickeyfactory import AsymmetricKeyFactory
 from symmetrickeyfactory import SymmetricKeyFactory
-
 
 class Server:
     def __init__(
@@ -13,32 +12,33 @@ class Server:
         asymmetric_bits: int, symmetric_key_type: str,
         symmetric_bits: int, key_file_index: str | None = None,
         ) -> None:
-        self.asymmetric_key_type = asymmetric_key_type
-        self.symmetric_key_type = symmetric_key_type
-        self.asymmetric_bits = asymmetric_bits
-        self.symmetric_bits = symmetric_bits
+        self.asymmetric_key_type: str = asymmetric_key_type
+        self.symmetric_key_type: str = symmetric_key_type
+        self.asymmetric_bits: int = asymmetric_bits
+        self.symmetric_bits: int = symmetric_bits
         self.sessions: dict[int, "Session"] = {}
+        
         if key_file_index is None:
             self.generate_asymmetric_keys()
         else:
             self.load_keys(key_file_index)
 
     def generate_asymmetric_keys(self) -> None:
-        asymmetric = AsymmetricKeyFactory.create_key(self.asymmetric_key_type, self.asymmetric_bits)
-        self.asymmetric_public_key: tuple[int, int] = asymmetric.public_key
-        self.asymmetric_private_key: tuple[int, int] = asymmetric.private_key
+        asymmetric: Asymmetric = AsymmetricKeyFactory.create_key(self.asymmetric_key_type, self.asymmetric_bits)
+        self.asymmetric_public_key = asymmetric.public_key
+        self.asymmetric_private_key = asymmetric.private_key
 
     def generate_symmetric_key(self) -> np.ndarray:
-        symmetric = SymmetricKeyFactory.create_key(self.symmetric_key_type, self.symmetric_bits, None)
+        symmetric: Symmetric = SymmetricKeyFactory.create_key(self.symmetric_key_type, self.symmetric_bits, None)
         return symmetric.key
 
     def add_session(self, session: "Session") -> None:
         self.sessions[session.id] = session
 
     def exchange_key(self, other_server: Self) -> list[int]:
-        symmetric_key: np.ndarray = self.generate_symmetric_key()
+        symmetric_key = self.generate_symmetric_key()
         
-        other_asymmetric_key = AsymmetricKeyFactory.get_key(other_server.asymmetric_key_type)
+        other_asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(other_server.asymmetric_key_type)
 
         encrypted_symmetric_key: list[int] = [
             other_asymmetric_key.encrypt_with_known_key(str(byte), other_server.asymmetric_public_key)
@@ -51,7 +51,7 @@ class Server:
         return encrypted_symmetric_key
 
     def load_keys(self, key_file_number: str) -> None:
-        asymmetric_key = AsymmetricKeyFactory.get_key(self.asymmetric_key_type)
+        asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(self.asymmetric_key_type)
         with open(f"asymmetric_public_key_{key_file_number}.txt", "r") as key_file:
             self.asymmetric_public_key = asymmetric_key.load_from_file(content=key_file.read())
 
@@ -62,7 +62,7 @@ class Server:
         if self.asymmetric_private_key == None:
             self.generate_asymmetric_keys()
             
-        asymmetric_key = AsymmetricKeyFactory.get_key(self.asymmetric_key_type)
+        asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(self.asymmetric_key_type)
 
         decrypted_integers: list[int] = asymmetric_key.decrypt_with_known_key(
             encrypted_symmetric_key, self.asymmetric_private_key
