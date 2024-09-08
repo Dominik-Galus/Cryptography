@@ -1,5 +1,6 @@
 from math import lcm
 from random import randrange
+
 import numpy as np
 
 from asymmetric import Asymmetric
@@ -74,8 +75,9 @@ class RSA(Asymmetric):
         return self._public_key
     
     @staticmethod
-    def load_from_file(content: list[str]) -> tuple[int, int]:
-        return (int(content[0]), int(content[1]))
+    def load_from_file(content: str) -> tuple[int, int]:
+        keys: list[str] = content.split()
+        return (int(keys[0]), int(keys[1]))
 
 
 if __name__ == "__main__":

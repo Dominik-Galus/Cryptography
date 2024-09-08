@@ -1,11 +1,10 @@
-from asymmetric import Asymmetric
-from session import Session
-from symmetric import Symmetric
-import numpy as np
 from typing import Self
+
+import numpy as np
+
 from asymmetrickeyfactory import AsymmetricKeyFactory
+from session import Session
 from symmetrickeyfactory import SymmetricKeyFactory
-from rsa import RSA
 
 
 class Server:
@@ -78,8 +77,20 @@ class Server:
 
 
 if __name__ == "__main__":
-    server1 = Server("RSA", 1024, "AES", 128, key_file_index="1")
-    server2 = Server("RSA", 1024, "AES", 128, key_file_index="2")
+    server1 = Server(
+        asymmetric_key_type="RSA",
+        asymmetric_bits=1024,
+        symmetric_key_type="AES",
+        symmetric_bits=128,
+        key_file_index="1"
+        )
+    server2 = Server(
+        asymmetric_key_type="RSA",
+        asymmetric_bits=1024,
+        symmetric_key_type="AES",
+        symmetric_bits=128,
+        key_file_index="2"
+        )
 
     encrypted_symmetric_key = server1.exchange_key(server2)
     decrypted_symmetric_key = server2.retrieve_key(encrypted_symmetric_key)

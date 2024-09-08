@@ -1,6 +1,6 @@
+from aes import AES
 from keyfactory import KeyFactory
 from symmetric import Symmetric
-from aes import AES
 
 
 class SymmetricKeyFactory(KeyFactory):
