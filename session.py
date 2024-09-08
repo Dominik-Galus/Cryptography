@@ -1,6 +1,3 @@
-import numpy as np
-
-from aes import AES
 from symmetric import Symmetric
 from symmetrickeyfactory import SymmetricKeyFactory
 
