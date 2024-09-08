@@ -23,6 +23,9 @@ class SymmetricKeyFactory(KeyFactory):
         raise TypeError("Invalid Symmetric key")
     
 if __name__ == "__main__":
-    aes = SymmetricKeyFactory.create_key("AES", 128, None)
-    print(aes.key)
+    aes1 = SymmetricKeyFactory.create_key("AES", 128, None)
+    aes2 = SymmetricKeyFactory.create_key("AES", 128, aes1.key)
+    encrypted_message = aes1.encrypt("Secret message")
+    decrypted_message = aes2.decrypt(encrypted_message)
+    assert decrypted_message == "Secret message"
     

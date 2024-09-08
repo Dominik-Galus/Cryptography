@@ -52,17 +52,12 @@ class Server:
         return encrypted_symmetric_key
 
     def load_keys(self, key_file_number: str) -> None:
+        asymmetric_key = AsymmetricKeyFactory.get_key(self.asymmetric_key_type)
         with open(f"asymmetric_public_key_{key_file_number}.txt", "r") as key_file:
-            keys: list[str] = key_file.read().split()
-            e: int = int(keys[0])
-            n: int = int(keys[1])
-            self.asymmetric_public_key: tuple[int, int] = (e, n)
+            self.asymmetric_public_key: tuple[int, int] = asymmetric_key.load_from_file(content=key_file.read())
 
         with open(f"asymmetric_private_key_{key_file_number}.txt", "r") as key_file:
-            keys: list[str] = key_file.read().split()
-            d: int = int(keys[0])
-            n: int = int(keys[1])
-            self.asymmetric_private_key: tuple[int, int] = (d, n)
+            self.asymmetric_private_key = asymmetric_key.load_from_file(content=key_file.read())
 
     def retrieve_key(self, encrypted_symmetric_key: list[int]) -> np.ndarray:
         if self.asymmetric_private_key == None:
