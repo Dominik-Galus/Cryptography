@@ -112,23 +112,27 @@ class AES(Symmetric):
         self.state ^= self.expanded_key[round * 4 : (round + 1) * 4].T
 
     def encrypt(self, message: str) -> str:
-        self.state: np.ndarray = self.aes_state(message)
-        self.add_round_key(0)
+        padded_message = message.ljust((len(message) + 15) // 16 * 16)
+        encrypted_message = ""
+    
+        for i in range(0, len(padded_message), 16):
+            block = padded_message[i:i+16]
+            self.state: np.ndarray = self.aes_state(block)
+            self.add_round_key(0)
 
-        for round in range(1, self.rounds):
+            for round in range(1, self.rounds):
+                self.sub_bytes()
+                self.shift_rows()
+                self.mix_columns()
+                self.add_round_key(round)
+
             self.sub_bytes()
             self.shift_rows()
-            self.mix_columns()
-            self.add_round_key(round)
+            self.add_round_key(self.rounds)
 
-        self.sub_bytes()
-        self.shift_rows()
-        self.add_round_key(self.rounds)
-
+            encrypted_message += ''.join([f"{num:02x}" for num in self.state.T.flatten()])
         
-        hex_string = ''.join([f"{num:02x}" for num in self.state.T.flatten()])
-
-        return hex_string
+        return encrypted_message
 
     def inv_mix_columns(self) -> None:
         for i in range(4):
@@ -160,24 +164,29 @@ class AES(Symmetric):
         self.state = inv_s_box[self.state // 16, self.state % 16]
 
     def decrypt(self, encrypted_message: str) -> str:
-        byte_array = np.array([int(encrypted_message[i:i+2], 16) for i in range(0, len(encrypted_message), 2)], dtype=np.uint8)
-        self.state = byte_array.reshape(4, 4).T
+        decrypted_text = ""
 
-        self.add_round_key(self.rounds)
+        for i in range(0, len(encrypted_message), 32):
+            block = encrypted_message[i:i + 32]
+            byte_array = np.array([int(block[j:j+2], 16) for j in range(0, 32, 2)], dtype=np.uint8)
+            self.state = byte_array.reshape(4, 4).T
 
-        for round in range(self.rounds - 1, 0, -1):
+            self.add_round_key(self.rounds)
+
+            for round in range(self.rounds - 1, 0, -1):
+                self.inv_shift_rows()
+                self.inv_sub_bytes()
+                self.add_round_key(round)
+                self.inv_mix_columns()
+
             self.inv_shift_rows()
             self.inv_sub_bytes()
-            self.add_round_key(round)
-            self.inv_mix_columns()
+            self.add_round_key(0)
 
-        self.inv_shift_rows()
-        self.inv_sub_bytes()
-        self.add_round_key(0)
-        
-        decrypted_text = ''.join([chr(byte) for byte in self.state.T.flatten()])
+            decrypted_text += ''.join([chr(byte) for byte in self.state.T.flatten()])
+
         decrypted_text = decrypted_text.rstrip()
-        
+
         return decrypted_text
     
     @property
@@ -186,9 +195,4 @@ class AES(Symmetric):
     
 
 if __name__ == "__main__":
-    aes1 = AES(128, aes_key=None)
-    aes2 = AES(128, aes_key=aes1.key)
-    encrypted = aes1.encrypt("Tajna wiadomosc")
-    decrypted = aes2.decrypt(encrypted)
-    
-    assert decrypted == "Tajna wiadomosc"
+    aes = AES(None, None)

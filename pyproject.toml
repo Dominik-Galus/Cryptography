@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Cryptography"
+dynamic = ["version"]
+description = ""
+authors = [
+    {name="Dominik Galus", email="dominikgalus9@gmail.com"} 
+    ]
+readme = "README.md"
+requires-python = "3.11.2"
+dependencies = [
+    "numpy==2.0.1"
+]
+
+[project.urls]
+Homepage = "https://github.com/Dominik-Galus/Cryptography"
+Repository = "https://github.com/Dominik-Galus/Cryptography/"
+Issues = "https://github.com/Dominik-Galus/Cryptography/issues"

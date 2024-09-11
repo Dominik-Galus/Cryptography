@@ -87,27 +87,30 @@ class RSA(Asymmetric):
 
 
 if __name__ == "__main__":
-    r = RSA(1024)
+    r = RSA(2048)
+    message = "Secret message"
+    encrypted = r.encrypt(message)
+    decrypted = r.decrypt(encrypted)
+    decr = RSA.decrypt_with_known_key(encrypted, r._private_key)
+    assert decrypted == message and decr == message
+    print(encrypted)
+    print(decrypted)
+    print(decr)
     
-    # encrypted = r.encrypt("Secret message")
-    # decrypted = r.decrypt(encrypted)
-    # print(encrypted)
-    # print(decrypted)
-    
-    xd = np.array(
-        [[60, 16, 201, 179], [53, 107, 179, 22], [60, 70, 202, 47], [139, 10, 244, 15]]
-    )
-    print(xd.shape)
-    encrypted_aes_key = [r.encrypt(str(byte)) for byte in xd.flatten()]
-    print(encrypted_aes_key)
+    # xd = np.array(
+    #     [[60, 16, 201, 179], [53, 107, 179, 22], [60, 70, 202, 47], [139, 10, 244, 15]]
+    # )
+    # print(xd.shape)
+    # encrypted_aes_key = [r.encrypt(str(byte)) for byte in xd.flatten()]
+    # print(encrypted_aes_key)
 
-    decrypted_integers = [r.decrypt(char) for char in encrypted_aes_key]
-    print(decrypted_integers)
-    # decrypted_integers = r.decrypt(encrypted_aes_key)  # List of decrypted integers
+    # decrypted_integers = [r.decrypt(char) for char in encrypted_aes_key]
     # print(decrypted_integers)
-    aes_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4, 4)
+    # # decrypted_integers = r.decrypt(encrypted_aes_key)  # List of decrypted integers
+    # # print(decrypted_integers)
+    # aes_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4, 4)
 
-    assert xd.all() == aes_key.all()
+    # assert xd.all() == aes_key.all()
 
     # encrypted_aes_key = [
     #     RSA.encrypt_with_known_key(str(byte), r.public_key) for byte in xd.flatten()
