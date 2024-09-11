@@ -1,9 +1,9 @@
 from math import gcd
 from typing import Self
 
-from restrictions.group import Group
-from restrictions.restriction import Restriction
-from restrictions.ring import Ring
+from src.algebra.restrictions.group import Group
+from src.algebra.restrictions.restriction import Restriction
+from src.algebra.restrictions.ring import Ring
 
 
 class Number:

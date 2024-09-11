@@ -2,8 +2,8 @@ import random
 
 import numpy as np
 
-from pure import inv_s_box, rcon, s_box
-from symmetric import Symmetric
+from src.data.aes_constants import inv_s_box, rcon, s_box
+from src.keys.symmetric.symmetric import Symmetric
 
 
 class AES(Symmetric):

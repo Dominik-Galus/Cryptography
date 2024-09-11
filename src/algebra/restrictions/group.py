@@ -1,4 +1,4 @@
-from restrictions.restriction import Restriction
+from src.algebra.restrictions.restriction import Restriction
 
 
 class Group(Restriction):

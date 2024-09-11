@@ -1,5 +1,5 @@
-from symmetric import Symmetric
-from symmetrickeyfactory import SymmetricKeyFactory
+from src.keys.symmetric.symmetric import Symmetric
+from src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
 
 
 class Session:

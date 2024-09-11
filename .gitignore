@@ -160,3 +160,9 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+asymmetric_private_key_1.txt
+asymmetric_private_key_2.txt
+asymmetric_public_key_1.txt
+asymmetric_public_key_2.txt
+

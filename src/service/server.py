@@ -2,11 +2,11 @@ from typing import Self
 
 import numpy as np
 
-from asymmetric import Asymmetric
-from asymmetrickeyfactory import AsymmetricKeyFactory
-from session import Session
-from symmetric import Symmetric
-from symmetrickeyfactory import SymmetricKeyFactory
+from src.keys.asymmetric.asymmetric import Asymmetric
+from src.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
+from src.service.session import Session
+from src.keys.symmetric.symmetric import Symmetric
+from src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
 
 
 class Server:
@@ -43,7 +43,7 @@ class Server:
         
         other_asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(other_server.asymmetric_key_type)
 
-        encrypted_symmetric_key: list[int] = [
+        encrypted_symmetric_key: list[str] = [
             other_asymmetric_key.encrypt_with_known_key(str(byte), other_server.asymmetric_public_key)
             for byte in symmetric_key.flatten()
         ]
@@ -55,10 +55,10 @@ class Server:
 
     def load_keys(self, key_file_number: str) -> None:
         asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(self.asymmetric_key_type)
-        with open(f"asymmetric_public_key_{key_file_number}.txt", "r") as key_file:
+        with open(f"src/data/asymmetric_public_key_{key_file_number}.txt", "r") as key_file:
             self.asymmetric_public_key = asymmetric_key.load_from_file(content=key_file.read())
 
-        with open(f"asymmetric_private_key_{key_file_number}.txt", "r") as key_file:
+        with open(f"src/data/asymmetric_private_key_{key_file_number}.txt", "r") as key_file:
             self.asymmetric_private_key = asymmetric_key.load_from_file(content=key_file.read())
 
     def retrieve_key(self, encrypted_symmetric_key: list[int]) -> np.ndarray:
@@ -67,9 +67,9 @@ class Server:
             
         asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(self.asymmetric_key_type)
 
-        decrypted_integers: list[int] = asymmetric_key.decrypt_with_known_key(
-            encrypted_symmetric_key, self.asymmetric_private_key
-        )
+        decrypted_integers: list[str] = [asymmetric_key.decrypt_with_known_key(
+            char, self.asymmetric_private_key
+        ) for char in encrypted_symmetric_key]
 
         symmetric_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4, 4)
 
