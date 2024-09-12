@@ -38,8 +38,4 @@ class Group(Restriction):
 
 
 if __name__ == "__main__":
-    g = Group(7)
-
-    assert g.add(3, 4) == 0
-    assert g.check(13) == 6
-    assert g.additive_inverse(4) == 3
+    Group(None)

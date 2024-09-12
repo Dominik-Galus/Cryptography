@@ -16,3 +16,6 @@ class Session:
     def decrypt_data(self, data):
         symmetric_key = SymmetricKeyFactory.create_key(self.symmetric_type, self.bits, self.symmetric_key)
         return symmetric_key.decrypt(data)
+
+if __name__ == "__main__":
+    Session(None, None, None, None)

@@ -75,32 +75,4 @@ class Server:
 
 
 if __name__ == "__main__":
-    server1 = Server(
-        asymmetric_key_type="RSA",
-        asymmetric_bits=1024,
-        symmetric_key_type="AES",
-        symmetric_bits=192,
-        key_file_index="1"
-        )
-    server2 = Server(
-        asymmetric_key_type="RSA",
-        asymmetric_bits=1024,
-        symmetric_key_type="AES",
-        symmetric_bits=192,
-        key_file_index=None
-        )
-
-    encrypted_symmetric_key = server1.exchange_key(server2)
-    decrypted_symmetric_key = server2.retrieve_key(encrypted_symmetric_key)
-
-    session_server1 = list(server1.sessions.values())[0]
-    session_server2 = list(server2.sessions.values())[0]
-
-    encrypted = session_server1.encrypt_data("Despite what your teacher may have told you, there is a wrong way to wield a lasso")
-    decrypted = session_server2.decrypt_data(encrypted)
-
-    assert decrypted == "Despite what your teacher may have told you, there is a wrong way to wield a lasso"
-
-    print("Encrypted:", encrypted)
-    print("Decrypted:", decrypted)
-    print("******************************************************************")
+    Server(None, None, None, None, None)

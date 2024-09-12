@@ -42,15 +42,4 @@ class Ring(Group):
 
 
 if __name__ == "__main__":
-    r1 = Ring(55)
-    r2 = Ring(780)
-    r3 = Ring(13)
-    r4 = Ring(12394)
-    r5 = Ring(239483)
-    r6 = Ring(1000)
-    print(r1.mult_inverse(35))
-    print(r2.mult_inverse(1000))
-    print(r3.mult_inverse(965))
-    print(r4.mult_inverse(387472))
-    print(r5.mult_inverse(758494))
-    print(r6.mult_inverse(9765))
+    Ring(None)

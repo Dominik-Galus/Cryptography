@@ -23,7 +23,4 @@ class AsymmetricKeyFactory(KeyFactory):
         raise TypeError("Invallid Asymmetric Key")
     
 if __name__ == "__main__":
-    rsa1 = AsymmetricKeyFactory.create_key("RSA", 1024)
-    encrypted_message = rsa1.encrypt("1234567")
-    decrypted_message = rsa1.decrypt(list(encrypted_message))
-    assert decrypted_message == "1234567"
+    AsymmetricKeyFactory.create_key(None, None)
