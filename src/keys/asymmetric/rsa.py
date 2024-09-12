@@ -1,8 +1,6 @@
 from math import lcm
 from random import randrange
 
-import numpy as np
-
 from src.keys.asymmetric.asymmetric import Asymmetric
 from src.algebra.number import Number
 from src.algebra.pure import is_prime

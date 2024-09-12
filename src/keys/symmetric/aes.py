@@ -7,19 +7,17 @@ from src.keys.symmetric.symmetric import Symmetric
 
 
 class AES(Symmetric):
-    def __init__(self, bits: int, aes_key: np.ndarray | None = None) -> None:
+    def __init__(self, bits: int, aes_key: np.ndarray | list[str] | None = None) -> None:
         if bits not in [128, 192, 256]:
             raise ValueError("Wrong bits key length")
         self.key_columns: int = bits // 32
         self.rounds: int = {128: 10, 192: 12, 256: 14}[bits]
         if aes_key is not None:
-            self._key = aes_key
-            #self._key = np.array([int(byte) for byte in aes_key]).reshape(4, self.key_columns)
+            self._key = np.array(aes_key, dtype=np.uint8).reshape(4, self.key_columns)
         else:
             self._key = self.generate_key(bits)
+
         self.key_expansion()
-        
-        print(self._key)
 
     def rot_word(self, word: np.ndarray) -> np.ndarray:
         return np.roll(word, -1)
@@ -35,7 +33,6 @@ class AES(Symmetric):
         byte_array = np.array(
             [int(hex_key[i : i + 2], 16) for i in range(0, len(hex_key), 2)]
         )
-        print(byte_array)
         matrix = np.array([byte_array[i : i + 4] for i in range(0, len(byte_array), 4)])
         return matrix.T
 
@@ -198,6 +195,26 @@ class AES(Symmetric):
     
 
 if __name__ == "__main__":
-    a = AES(192)
+    a = AES(256)
+    print(a._key)
     a.encrypt("siema")
     
+    
+    a = [[122, 221,   5, 148, 135, 231],
+        [  8,  32,  87,  52, 166, 147,],
+        [122, 167, 173,  19,  58,  74],
+        [133, 238, 225, 211,   8, 150]]
+    b = [[254, 241, 173,  73, 238,  54],
+        [  0, 165, 212, 220, 152, 174],
+        [127,  17,  87, 115,  91, 203],
+        [244, 153,  83,  11, 240,  43]]
+
+    c = [[ 84, 196, 160, 193],
+        [151, 227, 124, 190],
+        [204,  66,  66, 163],
+        [127,  75, 166, 165]]
+    
+    d = [[ "42", "183",  "23", "203", "167", "229",  "49",  "20"],
+        ["169",  "74",  "84", "209", "179",   "8",  "47", "110"],
+        ["118",  "51", "242", "181",  "10", "108", "183", "207"],
+        ["223", "109", "192", "202", "181", "243",  "40", "193"]]

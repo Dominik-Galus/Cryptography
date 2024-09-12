@@ -64,12 +64,10 @@ class Server:
     def retrieve_key(self, encrypted_symmetric_key: list[int]) -> np.ndarray:    
         asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(self.asymmetric_key_type)
 
-        decrypted_integers: list[str] = [asymmetric_key.decrypt_with_known_key(
+        symmetric_key: list[str] = [asymmetric_key.decrypt_with_known_key(
             char, self.asymmetric_private_key
         ) for char in encrypted_symmetric_key]
-        print(decrypted_integers)
-        symmetric_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4, self.symmetric_bits // 32)
-        print(symmetric_key)
+        
         session = Session(self.symmetric_key_type, symmetric_key, self.symmetric_bits, self.asymmetric_public_key)
         self.add_session(session)
 
