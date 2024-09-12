@@ -14,9 +14,12 @@ class AES(Symmetric):
         self.rounds: int = {128: 10, 192: 12, 256: 14}[bits]
         if aes_key is not None:
             self._key = aes_key
+            #self._key = np.array([int(byte) for byte in aes_key]).reshape(4, self.key_columns)
         else:
             self._key = self.generate_key(bits)
         self.key_expansion()
+        
+        print(self._key)
 
     def rot_word(self, word: np.ndarray) -> np.ndarray:
         return np.roll(word, -1)
@@ -24,16 +27,15 @@ class AES(Symmetric):
     def sub_word(self, word: np.ndarray) -> np.ndarray:
         return s_box[word // 16, word % 16]
 
-    def generate_key(self, bits: int) -> np.ndarray:
+    def generate_key(self, bits) -> np.ndarray:
         bytes_length: int = bits // 8
-        if bits % 8 != 0:
-            bytes_length += 1
         hex_key: str = "".join(
             random.choice("0123456789abcdef") for _ in range(bytes_length * 2)
         )
         byte_array = np.array(
             [int(hex_key[i : i + 2], 16) for i in range(0, len(hex_key), 2)]
         )
+        print(byte_array)
         matrix = np.array([byte_array[i : i + 4] for i in range(0, len(byte_array), 4)])
         return matrix.T
 
@@ -41,6 +43,7 @@ class AES(Symmetric):
         self.expanded_key: np.ndarray = np.zeros(
             (4 * (self.rounds + 1), 4), dtype=np.uint8
         )
+        
         self.expanded_key[: self.key_columns] = self.key.T
 
         for i in range(self.key_columns, 4 * (self.rounds + 1)):
@@ -195,4 +198,6 @@ class AES(Symmetric):
     
 
 if __name__ == "__main__":
-    aes = AES(None, None)
+    a = AES(192)
+    a.encrypt("siema")
+    

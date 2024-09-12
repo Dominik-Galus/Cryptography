@@ -15,8 +15,15 @@ class Field(Ring):
 
 if __name__ == "__main__":
 
-    Z_7 = Field(7)
-
-    assert Z_7.additive_inverse(2) == 5
-    assert Z_7.mult_inverse(3) == 5
-    assert Z_7.division(3, 4) == 6
+    r1 = Field(59)
+    r2 = Field(787)
+    r3 = Field(13)
+    r4 = Field(12391)
+    r5 = Field(239489)
+    r6 = Field(1009)
+    print(r1.division(35, 99))
+    print(r2.division(1000, 543))
+    print(r3.division(92, 965))
+    print(r4.division(387472, 6955486))
+    print(r5.division(758494, 923444))
+    print(r6.division(9765, 12385534))

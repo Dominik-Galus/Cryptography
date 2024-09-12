@@ -61,18 +61,15 @@ class Server:
         with open(f"src/data/asymmetric_private_key_{key_file_number}.txt", "r") as key_file:
             self.asymmetric_private_key = asymmetric_key.load_from_file(content=key_file.read())
 
-    def retrieve_key(self, encrypted_symmetric_key: list[int]) -> np.ndarray:
-        if self.asymmetric_private_key == None:
-            self.generate_asymmetric_keys()
-            
+    def retrieve_key(self, encrypted_symmetric_key: list[int]) -> np.ndarray:    
         asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(self.asymmetric_key_type)
 
         decrypted_integers: list[str] = [asymmetric_key.decrypt_with_known_key(
             char, self.asymmetric_private_key
         ) for char in encrypted_symmetric_key]
-
-        symmetric_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4, 4)
-
+        print(decrypted_integers)
+        symmetric_key = np.array(decrypted_integers, dtype=np.uint8).reshape(4, self.symmetric_bits // 32)
+        print(symmetric_key)
         session = Session(self.symmetric_key_type, symmetric_key, self.symmetric_bits, self.asymmetric_public_key)
         self.add_session(session)
 
@@ -84,15 +81,15 @@ if __name__ == "__main__":
         asymmetric_key_type="RSA",
         asymmetric_bits=1024,
         symmetric_key_type="AES",
-        symmetric_bits=128,
+        symmetric_bits=192,
         key_file_index="1"
         )
     server2 = Server(
         asymmetric_key_type="RSA",
         asymmetric_bits=1024,
         symmetric_key_type="AES",
-        symmetric_bits=128,
-        key_file_index="2"
+        symmetric_bits=192,
+        key_file_index=None
         )
 
     encrypted_symmetric_key = server1.exchange_key(server2)
@@ -101,10 +98,10 @@ if __name__ == "__main__":
     session_server1 = list(server1.sessions.values())[0]
     session_server2 = list(server2.sessions.values())[0]
 
-    encrypted = session_server1.encrypt_data("Secret message")
+    encrypted = session_server1.encrypt_data("Despite what your teacher may have told you, there is a wrong way to wield a lasso")
     decrypted = session_server2.decrypt_data(encrypted)
 
-    assert decrypted == "Secret message"
+    assert decrypted == "Despite what your teacher may have told you, there is a wrong way to wield a lasso"
 
     print("Encrypted:", encrypted)
     print("Decrypted:", decrypted)
