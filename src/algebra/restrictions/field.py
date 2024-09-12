@@ -13,5 +13,6 @@ class Field(Ring):
         b_inverse: int = self.mult_inverse(b)
         return self.mul(a, b_inverse)
 
+
 if __name__ == "__main__":
     Field(None)

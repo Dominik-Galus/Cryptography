@@ -7,7 +7,7 @@ class Group(Restriction):
         if mod < 0:
             raise ValueError("Modulo must be positive")
         self.mod = mod
-        self.e = 0
+        self.e: int = 0
 
     def additive_inverse(self, value: int) -> int:
         value = value % self.mod

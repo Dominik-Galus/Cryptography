@@ -7,7 +7,9 @@ from src.keys.symmetric.symmetric import Symmetric
 
 
 class AES(Symmetric):
-    def __init__(self, bits: int, aes_key: np.ndarray | list[str] | None = None) -> None:
+    def __init__(
+        self, bits: int, aes_key: np.ndarray | list[str] | None = None
+    ) -> None:
         if bits not in [128, 192, 256]:
             raise ValueError("Wrong bits key length")
         self.key_columns: int = bits // 32
@@ -40,7 +42,7 @@ class AES(Symmetric):
         self.expanded_key: np.ndarray = np.zeros(
             (4 * (self.rounds + 1), 4), dtype=np.uint8
         )
-        
+
         self.expanded_key[: self.key_columns] = self.key.T
 
         for i in range(self.key_columns, 4 * (self.rounds + 1)):
@@ -59,13 +61,12 @@ class AES(Symmetric):
 
     def aes_state(self, text: str) -> np.ndarray:
         byte_array = np.array([ord(char) for char in text.ljust(16)])
-        state = byte_array.reshape(4, 4).T
+        state: np.ndarray = byte_array.reshape(4, 4).T
         return state
 
     def int_matrix_to_hex_matrix(self, matrix) -> np.ndarray:
         hex_matrix = np.array([[f"{num:02x}" for num in row] for row in matrix])
         return hex_matrix
-    
 
     def sub_bytes(self) -> None:
         self.state = s_box[self.state // 16, self.state % 16]
@@ -114,9 +115,9 @@ class AES(Symmetric):
     def encrypt(self, message: str) -> str:
         padded_message = message.ljust((len(message) + 15) // 16 * 16)
         encrypted_message = ""
-    
+
         for i in range(0, len(padded_message), 16):
-            block = padded_message[i:i+16]
+            block = padded_message[i : i + 16]
             self.state: np.ndarray = self.aes_state(block)
             self.add_round_key(0)
 
@@ -130,8 +131,10 @@ class AES(Symmetric):
             self.shift_rows()
             self.add_round_key(self.rounds)
 
-            encrypted_message += ''.join([f"{num:02x}" for num in self.state.T.flatten()])
-        
+            encrypted_message += "".join(
+                [f"{num:02x}" for num in self.state.T.flatten()]
+            )
+
         return encrypted_message
 
     def inv_mix_columns(self) -> None:
@@ -164,11 +167,13 @@ class AES(Symmetric):
         self.state = inv_s_box[self.state // 16, self.state % 16]
 
     def decrypt(self, encrypted_message: str) -> str:
-        decrypted_text = ""
+        decrypted_text: str = ""
 
         for i in range(0, len(encrypted_message), 32):
-            block = encrypted_message[i:i + 32]
-            byte_array = np.array([int(block[j:j+2], 16) for j in range(0, 32, 2)], dtype=np.uint8)
+            block: str = encrypted_message[i : i + 32]
+            byte_array = np.array(
+                [int(block[j : j + 2], 16) for j in range(0, 32, 2)], dtype=np.uint8
+            )
             self.state = byte_array.reshape(4, 4).T
 
             self.add_round_key(self.rounds)
@@ -183,16 +188,16 @@ class AES(Symmetric):
             self.inv_sub_bytes()
             self.add_round_key(0)
 
-            decrypted_text += ''.join([chr(byte) for byte in self.state.T.flatten()])
+            decrypted_text += "".join([chr(byte) for byte in self.state.T.flatten()])
 
         decrypted_text = decrypted_text.rstrip()
 
         return decrypted_text
-    
+
     @property
-    def key(self):
+    def key(self) -> np.ndarray:
         return self._key
-    
+
 
 if __name__ == "__main__":
     AES(None, None)

@@ -1,10 +1,10 @@
 from math import lcm
 from random import randrange
 
-from src.keys.asymmetric.asymmetric import Asymmetric
 from src.algebra.number import Number
 from src.algebra.pure import is_prime
 from src.algebra.restrictions.ring import Ring
+from src.keys.asymmetric.asymmetric import Asymmetric
 
 
 class RSA(Asymmetric):
@@ -16,30 +16,44 @@ class RSA(Asymmetric):
     def encrypt(self, message: str) -> str:
         e, n = self.public_key
         cipher = [pow(ord(char), e, n) for char in message]
-        encrypted_message = ''.join([str(num).zfill(len(str(n))) for num in cipher])
+        encrypted_message = "".join([str(num).zfill(len(str(n))) for num in cipher])
         return encrypted_message
 
     def decrypt(self, encrypted_message: str) -> str:
         d, n = self.private_key
         block_size = len(str(n))
-        encrypted_numbers = [int(encrypted_message[i:i+block_size]) for i in range(0, len(encrypted_message), block_size)]
+        encrypted_numbers = [
+            int(encrypted_message[i : i + block_size])
+            for i in range(0, len(encrypted_message), block_size)
+        ]
         decrypted_chars = [chr(pow(num, d, n)) for num in encrypted_numbers]
-        return ''.join(decrypted_chars)
+        return "".join(decrypted_chars)
 
     @staticmethod
     def encrypt_with_known_key(message: str, public_key: tuple[int, int]) -> str:
-        
-        cipher: list[int] = [pow(ord(char), public_key[0], public_key[1]) for char in message]
-        encrypted_message: str = ''.join([str(num).zfill(len(str(public_key[1]))) for num in cipher])
-        
+
+        cipher: list[int] = [
+            pow(ord(char), public_key[0], public_key[1]) for char in message
+        ]
+        encrypted_message: str = "".join(
+            [str(num).zfill(len(str(public_key[1]))) for num in cipher]
+        )
+
         return encrypted_message
 
     @staticmethod
-    def decrypt_with_known_key(encrypted_message: str, private_key: tuple[int, int]) -> str:
+    def decrypt_with_known_key(
+        encrypted_message: str, private_key: tuple[int, int]
+    ) -> str:
         block_size: int = len(str(private_key[1]))
-        encrypted_numbers = [int(encrypted_message[i:i+block_size]) for i in range(0, len(encrypted_message), block_size)]
-        decrypted_chars = [chr(pow(num, private_key[0], private_key[1])) for num in encrypted_numbers]
-        return ''.join(decrypted_chars)
+        encrypted_numbers = [
+            int(encrypted_message[i : i + block_size])
+            for i in range(0, len(encrypted_message), block_size)
+        ]
+        decrypted_chars = [
+            chr(pow(num, private_key[0], private_key[1])) for num in encrypted_numbers
+        ]
+        return "".join(decrypted_chars)
 
     def generate_keys(self) -> tuple[tuple[int, int]]:
 
@@ -65,19 +79,19 @@ class RSA(Asymmetric):
         return self.p * self.q
 
     def generate_large_prime(self, bits: int) -> int:
-        p = randrange((2 ** (bits - 1)) + 1, (2**bits) - 1)
+        p: int = randrange((2 ** (bits - 1)) + 1, (2**bits) - 1)
         while not is_prime(p):
-            p = randrange((2 ** (bits - 1)) + 1, (2**bits) - 1)
+            p: int = randrange((2 ** (bits - 1)) + 1, (2**bits) - 1)
         return p
-    
+
     @property
-    def private_key(self):
+    def private_key(self) -> tuple[int, int]:
         return self._private_key
-    
+
     @property
-    def public_key(self):
+    def public_key(self) -> tuple[int, int]:
         return self._public_key
-    
+
     @staticmethod
     def load_from_file(content: str) -> tuple[int, int]:
         keys: list[str] = content.split()

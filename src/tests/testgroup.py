@@ -2,8 +2,9 @@ import pytest
 
 from src.algebra.restrictions.group import Group
 
+
 class TestGroup:
-    
+
     @pytest.mark.parametrize(
         "test_value1,test_value2,modulo,expected",
         zip(
@@ -13,20 +14,23 @@ class TestGroup:
             [0, 34, 11, 11, 64, 43, 11, 57],
         ),
     )
-    def test_add(self, test_value1, test_value2, modulo, expected):
+    def test_add(self, test_value1: int, test_value2: int, modulo: int, expected: int) -> None:
         group = Group(modulo)
         result = group.add(test_value1, test_value2)
         assert result == expected
-    
+
     @pytest.mark.parametrize(
         "test_value, modulo, expected",
         [
-            (35, 55, 20), (1000, 780, 560),
-            (91, 12, 5), (387472, 12394, 9136),
-            (758494, 239483, 199438), (9765, 1000, 235)
+            (35, 55, 20),
+            (1000, 780, 560),
+            (91, 12, 5),
+            (387472, 12394, 9136),
+            (758494, 239483, 199438),
+            (9765, 1000, 235),
         ],
     )
-    def test_add_inv(self, test_value, modulo, expected):
+    def test_add_inv(self, test_value: int, modulo: int, expected: int) -> None:
         group = Group(modulo)
         result = group.additive_inverse(test_value)
         assert result == expected

@@ -34,7 +34,7 @@ class Number:
             )
         else:
             raise ValueError("Numbers can be multiplied only with the same restriction")
-        
+
     def gcd(self, number: int) -> int:
         return gcd(self.value, number)
 

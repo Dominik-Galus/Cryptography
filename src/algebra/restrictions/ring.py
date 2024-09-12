@@ -34,7 +34,7 @@ class Ring(Group):
         return t2
 
     def mul(self, value1: int, value2: int) -> int:
-        if value1 % self.mod == 0 or value2  % self.mod == 0:
+        if value1 % self.mod == 0 or value2 % self.mod == 0:
             raise ValueError("Can't multiply with 0")
         result: int = (value1 * value2) % self.mod
         result = result + self.mod if result < 0 else result

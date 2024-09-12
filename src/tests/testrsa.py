@@ -18,12 +18,12 @@ class TestRSA:
             ("asfhsdj42323", 1024),
         ],
     )
-    def test_algorithm(self, message, key_length):
+    def test_algorithm(self, message: str, key_length: int) -> None:
         rsa = RSA(key_length)
-        encrypted = rsa.encrypt(message)
-        decrypted = rsa.decrypt(encrypted)
+        encrypted: str = rsa.encrypt(message)
+        decrypted: str = rsa.decrypt(encrypted)
         assert decrypted == message
-        
-        encrypted = RSA.encrypt_with_known_key(message, rsa._public_key)
-        decrypted = RSA.decrypt_with_known_key(encrypted, rsa._private_key)
+
+        encrypted: str = RSA.encrypt_with_known_key(message, rsa._public_key)
+        decrypted: str = RSA.decrypt_with_known_key(encrypted, rsa._private_key)
         assert decrypted == message
