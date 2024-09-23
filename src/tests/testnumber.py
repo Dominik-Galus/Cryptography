@@ -17,14 +17,20 @@ class TestNumber:
         ),
     )
     def test_add(self, test_value1: int, test_value2: int, modulo: int, expected: int) -> None:
-        result1: Number = Number(test_value1, Ring(modulo)) + Number(test_value2, Ring(modulo))
-        result2: Number = Number(test_value1, Group(modulo)) + Number(test_value2, Group(modulo))
-        
+        result1: Number = Number(test_value1, Ring(modulo)) + Number(
+            test_value2, Ring(modulo)
+        )
+        result2: Number = Number(test_value1, Group(modulo)) + Number(
+            test_value2, Group(modulo)
+        )
+
         assert result1.value == expected
         assert result2.value == expected
 
         result1 = Number(test_value2, Ring(modulo)) + Number(test_value1, Ring(modulo))
-        result2 = Number(test_value2, Group(modulo)) + Number(test_value1, Group(modulo))
+        result2 = Number(test_value2, Group(modulo)) + Number(
+            test_value1, Group(modulo)
+        )
         assert result1.value == expected
         assert result2.value == expected
 
@@ -38,7 +44,9 @@ class TestNumber:
         ),
     )
     def test_mul(self, test_value1: int, test_value2: int, modulo: int, expected: int) -> None:
-        result: Number = Number(test_value1, Ring(modulo)) * Number(test_value2, Ring(modulo))
+        result: Number = Number(test_value1, Ring(modulo)) * Number(
+            test_value2, Ring(modulo)
+        )
         assert result.value == expected
 
         result = Number(test_value2, Ring(modulo)) * Number(test_value1, Ring(modulo))

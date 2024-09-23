@@ -4,7 +4,11 @@ from src.keys.symmetric.symmetric import Symmetric
 
 class Session:
     def __init__(
-        self, symmetric_type: Symmetric, symmetric_key: list[str], bits: int, server_id: int
+        self,
+        symmetric_type: Symmetric,
+        symmetric_key: list[str],
+        bits: int,
+        server_id: int,
     ) -> None:
         self.symmetric_key: Symmetric = symmetric_key
         self.bits = bits

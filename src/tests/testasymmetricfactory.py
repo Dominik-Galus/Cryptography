@@ -1,7 +1,7 @@
 import pytest
 
-from src.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
 from src.keys.asymmetric.asymmetric import Asymmetric
+from src.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
 
 
 class TestAsymmetricFactory:
@@ -14,7 +14,9 @@ class TestAsymmetricFactory:
             ("RSA", 1024, "Dont mess with my family or there will be consequences"),
         ],
     )
-    def test_factory(self, asymmetric_key: Asymmetric, key_length: int, message: str) -> None:
+    def test_factory(
+        self, asymmetric_key: Asymmetric, key_length: int, message: str
+    ) -> None:
         asymmetric = AsymmetricKeyFactory.create_key(asymmetric_key, key_length)
         encrypted: str = asymmetric.encrypt(message)
         decrypted: str = asymmetric.decrypt(encrypted)

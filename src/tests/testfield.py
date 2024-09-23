@@ -16,7 +16,9 @@ class TestField:
             (9765, 12385534, 1009, 80),
         ],
     )
-    def test_division(self, test_value1: int, test_value2: int, modulo: int, expected: int) -> None:
+    def test_division(
+        self, test_value1: int, test_value2: int, modulo: int, expected: int
+    ) -> None:
         field = Field(modulo)
         result = field.division(test_value1, test_value2)
         assert result == expected

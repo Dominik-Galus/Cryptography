@@ -55,7 +55,9 @@ class TestServer:
         )
 
         encrypted_symmetric_key: list[str] = server1.exchange_key(server2)
-        decrypted_symmetric_key: list[str] = server2.retrieve_key(encrypted_symmetric_key)
+        decrypted_symmetric_key: list[str] = server2.retrieve_key(
+            encrypted_symmetric_key
+        )
 
         session_server1 = list(server1.sessions.values())[0]
         session_server2 = list(server2.sessions.values())[0]

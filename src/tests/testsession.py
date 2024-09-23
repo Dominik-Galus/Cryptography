@@ -13,14 +13,7 @@ class TestSession:
                 "AES",
                 [
                     [122, 221, 5, 148, 135, 231],
-                    [
-                        8,
-                        32,
-                        87,
-                        52,
-                        166,
-                        147,
-                    ],
+                    [8, 32, 87, 52, 166, 147],
                     [122, 167, 173, 19, 58, 74],
                     [133, 238, 225, 211, 8, 150],
                 ],
@@ -66,7 +59,14 @@ class TestSession:
             ),
         ],
     )
-    def test_session(self, symmetric_type: str, symmetric_key: np.ndarray, bits: int, server_id: str, message: str) -> None:
+    def test_session(
+        self,
+        symmetric_type: str,
+        symmetric_key: np.ndarray,
+        bits: int,
+        server_id: str,
+        message: str,
+    ) -> None:
         session = Session(symmetric_type, symmetric_key, bits, server_id)
         encrypted: str = session.encrypt_data(message)
         decrypted: str = session.decrypt_data(encrypted)
