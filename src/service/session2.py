@@ -51,4 +51,4 @@ class Session:
                 break
 
 if __name__ == "__main__":
-    session = Session("localhost", 55556)
+    session = Session(("localhost", 55556))
