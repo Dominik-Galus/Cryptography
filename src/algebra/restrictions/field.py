@@ -6,7 +6,7 @@ class Field(Ring):
 
     def __init__(self, mod: int) -> None:
         super().__init__(mod)
-        if is_prime(self.mod) == False:
+        if not is_prime(self.mod):
             raise TypeError("To create a field parse a prime argument")
 
     def division(self, a: int, b: int) -> int:

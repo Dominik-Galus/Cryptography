@@ -10,7 +10,7 @@ authors = [
     {name="Dominik Galus", email="dominikgalus9@gmail.com"} 
     ]
 readme = "README.md"
-requires-python = "3.11.2"
+requires-python = ">=3.11.2"
 dependencies = [
     "numpy==2.0.1"
 ]
@@ -19,3 +19,6 @@ dependencies = [
 Homepage = "https://github.com/Dominik-Galus/Cryptography"
 Repository = "https://github.com/Dominik-Galus/Cryptography/"
 Issues = "https://github.com/Dominik-Galus/Cryptography/issues"
+
+[tool.ruff]
+select = ["ALL"]

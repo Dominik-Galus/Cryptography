@@ -10,10 +10,10 @@ class Number:
         self.value = self.restriction.check(value)
 
     def __add__(self, other: int | Self) -> Self:
-        if type(other) == int:
+        if type(other) is int:
             return Number(self.restriction.add(self.value, other), self.restriction)
         elif (
-            type(self.restriction) == type(other.restriction)
+            type(self.restriction) is type(other.restriction)
             and self.restriction.modulo() == other.restriction.modulo()
         ):
             return Number(
@@ -23,10 +23,10 @@ class Number:
             raise ValueError("Numbers can be added only with the same restriction")
 
     def __mul__(self, other: int | Self) -> Self:
-        if type(other) == int:
+        if type(other) is int:
             return Number(self.restriction.mul(self.value, other), self.restriction)
         elif (
-            type(self.restriction) == type(other.restriction)
+            type(self.restriction) is type(other.restriction)
             and self.restriction.modulo() == other.restriction.modulo()
         ):
             return Number(

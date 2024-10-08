@@ -1,4 +1,4 @@
-from random import getrandbits, randint
+from random import randint
 
 
 def is_prime(value: int, k: int = 1000) -> bool:

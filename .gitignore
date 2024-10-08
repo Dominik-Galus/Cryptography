@@ -166,3 +166,4 @@ asymmetric_private_key_2.txt
 asymmetric_public_key_1.txt
 asymmetric_public_key_2.txt
 
+.ruff_cache
