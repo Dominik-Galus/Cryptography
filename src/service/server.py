@@ -87,7 +87,6 @@ class Server:
             self.server_connection.sendall(f"{self.port}-".encode())
             self.send_asymmetric_public_key_to_server()
             key: str = self.server_connection.recv(self.asymmetric_bits * 16).decode()
-            print(key)
             
             threading.Thread(target=self.receive_data_from_server).start()
             print("Connected with server")
@@ -110,7 +109,6 @@ class Server:
                 sc, sockname = self.server_socket.accept()
                 received = sc.recv(1024).decode()
                 response: list[str] = received.split("-")
-                print(response)
                 if response[0] == str(address[1]):
                     self.server_connection = sc
                     print("Connected with the server")
@@ -261,11 +259,11 @@ class Server:
 
 if __name__ == "__main__":
     server = Server(
-        address=("localhost", 55560),
+        address=("localhost", 55561),
         asymmetric_key_type="RSA",
         asymmetric_bits=1024,
         symmetric_key_type="AES",
         symmetric_bits=128,
         key_file_index="2"
     )
-    server.connection_handler(("localhost", 55561))
+    server.connection_handler(("localhost", 55560))
