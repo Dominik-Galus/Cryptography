@@ -259,11 +259,11 @@ class Server:
 
 if __name__ == "__main__":
     server = Server(
-        address=("localhost", 55561),
+        address=("localhost", 55556),
         asymmetric_key_type="RSA",
         asymmetric_bits=1024,
         symmetric_key_type="AES",
         symmetric_bits=128,
         key_file_index="2"
     )
-    server.connection_handler(("localhost", 55560))
+    server.connection_handler(("localhost", 55555))

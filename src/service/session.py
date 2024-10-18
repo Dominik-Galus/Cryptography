@@ -49,7 +49,7 @@ class Session:
         )
         return symmetric_key.encrypt(data)
 
-    def decrypt_data(self, data: str):
+    def decrypt_data(self, data: str) -> str:
         symmetric_key: Symmetric = SymmetricKeyFactory.create_key(
             key_type=self.symmetric_type,
             bits=self.bits,
@@ -61,6 +61,7 @@ class Session:
         while True:
             try:
                 message: str = input("")
+                print(message)
                 message = self.encrypt_data(message)
                 if not message:
                     raise ConnectionResetError("Session input closed")
@@ -86,4 +87,4 @@ class Session:
                 break
 
 if __name__ == "__main__":
-    session = Session(("localhost", 55561))
+    session = Session((None, None))
