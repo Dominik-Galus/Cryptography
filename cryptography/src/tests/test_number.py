@@ -1,8 +1,8 @@
 import pytest
 
-from src.algebra.number import Number
-from src.algebra.restrictions.group import Group
-from src.algebra.restrictions.ring import Ring
+from cryptography.src.algebra.number import Number
+from cryptography.src.algebra.restrictions.group import Group
+from cryptography.src.algebra.restrictions.ring import Ring
 
 
 class TestNumber:

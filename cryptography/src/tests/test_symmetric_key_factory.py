@@ -1,7 +1,7 @@
 import pytest
 
-from src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
-from src.keys.symmetric.symmetric import Symmetric
+from cryptography.src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
+from cryptography.src.keys.symmetric.symmetric import Symmetric
 
 
 class TestSymmetricFactory:

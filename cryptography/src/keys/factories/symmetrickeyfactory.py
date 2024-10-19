@@ -1,6 +1,6 @@
-from src.keys.factories.keyfactory import KeyFactory
-from src.keys.symmetric.aes import AES
-from src.keys.symmetric.symmetric import Symmetric
+from cryptography.src.keys.factories.keyfactory import KeyFactory
+from cryptography.src.keys.symmetric.aes import AES
+from cryptography.src.keys.symmetric.symmetric import Symmetric
 
 
 class SymmetricKeyFactory(KeyFactory):

@@ -1,6 +1,6 @@
-from src.keys.asymmetric.asymmetric import Asymmetric
-from src.keys.asymmetric.rsa import RSA
-from src.keys.factories.keyfactory import KeyFactory
+from cryptography.src.keys.asymmetric.asymmetric import Asymmetric
+from cryptography.src.keys.asymmetric.rsa import RSA
+from cryptography.src.keys.factories.keyfactory import KeyFactory
 
 
 class AsymmetricKeyFactory(KeyFactory):

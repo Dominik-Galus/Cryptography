@@ -1,6 +1,6 @@
 import pytest
 
-from src.keys.asymmetric.rsa import RSA
+from cryptography.src.keys.asymmetric.rsa import RSA
 
 
 class TestRSA:

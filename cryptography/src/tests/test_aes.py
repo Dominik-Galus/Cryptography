@@ -1,6 +1,6 @@
 import pytest
 
-from src.keys.symmetric.aes import AES
+from cryptography.src.keys.symmetric.aes import AES
 
 
 class TestAES:

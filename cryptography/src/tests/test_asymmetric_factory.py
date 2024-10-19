@@ -1,7 +1,7 @@
 import pytest
 
-from src.keys.asymmetric.asymmetric import Asymmetric
-from src.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
+from cryptography.src.keys.asymmetric.asymmetric import Asymmetric
+from cryptography.src.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
 
 
 class TestAsymmetricFactory:

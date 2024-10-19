@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from src.keys.asymmetric.asymmetric import Asymmetric
-from src.keys.symmetric.symmetric import Symmetric
+from cryptography.src.keys.asymmetric.asymmetric import Asymmetric
+from cryptography.src.keys.symmetric.symmetric import Symmetric
 
 
 class KeyFactory(ABC):

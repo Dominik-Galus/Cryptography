@@ -1,6 +1,6 @@
 from math import gcd
 
-from src.algebra.restrictions.group import Group
+from cryptography.src.algebra.restrictions.group import Group
 
 
 class Ring(Group):

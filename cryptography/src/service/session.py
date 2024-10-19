@@ -2,8 +2,8 @@ import socket
 import threading
 import time
 
-from src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
-from src.keys.symmetric.symmetric import Symmetric
+from cryptography.src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
+from cryptography.src.keys.symmetric.symmetric import Symmetric
 
 class Session:
     def __init__(self, server_address: tuple[str, int]) -> None:

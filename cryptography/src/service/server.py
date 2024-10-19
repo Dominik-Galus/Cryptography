@@ -4,11 +4,10 @@ import threading
 
 import numpy as np
 
-from src.keys.asymmetric.asymmetric import Asymmetric
-from src.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
-from src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
-from src.keys.symmetric.symmetric import Symmetric
-#from src.service.session2 import Session
+from cryptography.src.keys.asymmetric.asymmetric import Asymmetric
+from cryptography.src.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
+from cryptography.src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
+from cryptography.src.keys.symmetric.symmetric import Symmetric
 
 class Server:
     def __init__(
@@ -56,9 +55,9 @@ class Server:
             self.asymmetric_key_type,
         )
 
-        if not (path_to_public := pathlib.Path(f"src/data/asymmetric_public_key_{key_file_number}.txt")).exists():
+        if not (path_to_public := pathlib.Path(f"cryptography/src/data/asymmetric_public_key_{key_file_number}.txt")).exists():
             raise FileNotFoundError("Public key file not found")
-        if not (path_to_private := pathlib.Path(f"src/data/asymmetric_private_key_{key_file_number}.txt")).exists():
+        if not (path_to_private := pathlib.Path(f"cryptography/src/data/asymmetric_private_key_{key_file_number}.txt")).exists():
             raise FileNotFoundError("Private key file not found")
 
         with open(path_to_public) as key_file:

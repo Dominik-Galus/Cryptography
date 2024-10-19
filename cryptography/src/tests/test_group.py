@@ -1,6 +1,6 @@
 import pytest
 
-from src.algebra.restrictions.group import Group
+from cryptography.src.algebra.restrictions.group import Group
 
 
 class TestGroup:

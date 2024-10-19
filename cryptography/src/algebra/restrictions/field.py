@@ -1,5 +1,5 @@
-from src.algebra.pure import is_prime
-from src.algebra.restrictions.ring import Ring
+from cryptography.src.algebra.pure import is_prime
+from cryptography.src.algebra.restrictions.ring import Ring
 
 
 class Field(Ring):
