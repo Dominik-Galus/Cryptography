@@ -1,6 +1,6 @@
 import pytest
 
-from src.algebra.restrictions.ring import Ring
+from cryptography.src.algebra.restrictions.ring import Ring
 
 
 class TestRing:
