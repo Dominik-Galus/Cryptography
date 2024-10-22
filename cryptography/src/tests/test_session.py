@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 from cryptography.src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
 from cryptography.src.service.session import Session
@@ -73,28 +74,30 @@ class TestSession:
         mock_socket_instance = mock_socket.return_value
         session = Session(("localhost", 55556))
 
-        with patch("builtins.input", side_effect=["test message"]), \
-            patch.object(session, "encrypt_data", return_value="encrypted message"):
+        with (
+            patch("builtins.input", side_effect=["test message"]),
+            patch.object(session, "encrypt_data", return_value="encrypted message"),
+        ):
 
             session.write_message()
 
             session.encrypt_data.assert_called_once_with("test message")
 
             mock_socket_instance.send.assert_called_with(b"encrypted message")
-            
+
     @patch("socket.socket")
     def test_receive_message(self, mock_socket: MagicMock) -> None:
         mock_socket_instance = mock_socket.return_value
         mock_socket_instance.recv.return_value = b"mockkey-AES-256"
         session = Session(("localhost", 55556))
         mock_socket_instance.recv.return_value = b"encrypted message"
-        
-        with patch.object(session, "decrypt_data", side_effect=["Decrypted message"]) as mock_decrypt:
+
+        with patch.object(
+            session, "decrypt_data", side_effect=["Decrypted message"]
+        ) as mock_decrypt:
             with patch("builtins.print") as mock_print:
                 session.receive_message()
-                
+
                 mock_decrypt.assert_called_with("encrypted message")
                 mock_socket_instance.recv.assert_called_with(20000)
                 mock_print.assert_any_call("Guest: Decrypted message")
-        
-

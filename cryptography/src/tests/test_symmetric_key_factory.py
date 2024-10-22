@@ -14,7 +14,9 @@ class TestSymmetricFactory:
             ("AES", 256, "She always speaks to him in a loud voice."),
         ],
     )
-    def test_factory(self, symmetric_key: Symmetric, key_length: int, message: str) -> None:
+    def test_factory(
+        self, symmetric_key: Symmetric, key_length: int, message: str
+    ) -> None:
         symmetric = SymmetricKeyFactory.create_key(symmetric_key, key_length, None)
         encrypted: str = symmetric.encrypt(message)
         decrypted: str = symmetric.decrypt(encrypted)

@@ -42,7 +42,9 @@ class RSA(Asymmetric):
         return encrypted_message
 
     @staticmethod
-    def decrypt_with_known_key(encrypted_message: str, private_key: tuple[int, int]) -> str:
+    def decrypt_with_known_key(
+        encrypted_message: str, private_key: tuple[int, int]
+    ) -> str:
         block_size: int = len(str(private_key[1]))
         encrypted_numbers = [
             int(encrypted_message[i : i + block_size])
@@ -96,6 +98,7 @@ class RSA(Asymmetric):
         if len(keys) != 2:
             raise Exception("Too much content in file")
         return (int(keys[0]), int(keys[1]))
+
 
 if __name__ == "__main__":
     RSA(None)

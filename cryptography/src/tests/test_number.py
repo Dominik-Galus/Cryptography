@@ -16,7 +16,9 @@ class TestNumber:
             [0, 34, 11, 11, 64, 43, 11, 57],
         ),
     )
-    def test_add(self, test_value1: int, test_value2: int, modulo: int, expected: int) -> None:
+    def test_add(
+        self, test_value1: int, test_value2: int, modulo: int, expected: int
+    ) -> None:
         result1: Number = Number(test_value1, Ring(modulo)) + Number(
             test_value2, Ring(modulo)
         )
@@ -43,7 +45,9 @@ class TestNumber:
             [10, 0, 32, 22, 11, 22, 0, 12],
         ),
     )
-    def test_mul(self, test_value1: int, test_value2: int, modulo: int, expected: int) -> None:
+    def test_mul(
+        self, test_value1: int, test_value2: int, modulo: int, expected: int
+    ) -> None:
         result: Number = Number(test_value1, Ring(modulo)) * Number(
             test_value2, Ring(modulo)
         )

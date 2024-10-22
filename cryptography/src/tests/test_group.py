@@ -14,7 +14,9 @@ class TestGroup:
             [0, 34, 11, 11, 64, 43, 11, 57],
         ),
     )
-    def test_add(self, test_value1: int, test_value2: int, modulo: int, expected: int) -> None:
+    def test_add(
+        self, test_value1: int, test_value2: int, modulo: int, expected: int
+    ) -> None:
         group = Group(modulo)
         result = group.add(test_value1, test_value2)
         assert result == expected
