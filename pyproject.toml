@@ -16,6 +16,9 @@ dependencies = [
     "pytest==8.3.2"
 ]
 
+[project.scripts]
+key-gen = "cryptography.cli.key_gen:generate_key_to_file"
+
 [project.urls]
 Homepage = "https://github.com/Dominik-Galus/Cryptography"
 Repository = "https://github.com/Dominik-Galus/Cryptography/"
