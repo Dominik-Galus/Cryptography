@@ -19,11 +19,11 @@ def generate_key_to_file(key_type: str, length: int, output: str) -> None:
     key_private = key.private_key
 
     with open(public_filename, "w+") as public_file:
-        content = str(key_public[0]) + " " + str(key_public[1])
+        content: str = str(key_public[0]) + " " + str(key_public[1])
         public_file.write(content)
 
     with open(private_filename, "w+") as private_file:
-        content = str(key_private[0]) + " " + str(key_public[1])
+        content: str = str(key_private[0]) + " " + str(key_public[1])
         private_file.write(content)
 
 if __name__ == "__main__":
