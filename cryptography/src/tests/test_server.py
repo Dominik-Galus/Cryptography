@@ -17,7 +17,7 @@ class TestServer:
             asymmetric_bits=1024,
             symmetric_key_type="AES",
             symmetric_bits=128,
-            key_file_index="2",
+            path_to_key=None,
         )
         return server
 
@@ -80,7 +80,7 @@ class TestServer:
                     asymmetric_bits=1024,
                     symmetric_key_type="AES",
                     symmetric_bits=128,
-                    key_file_index="13",
+                    path_to_key="13",
                 )
 
                 assert server.asymmetric_public_key == (65537, 123456789)

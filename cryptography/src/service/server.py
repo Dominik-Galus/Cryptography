@@ -18,7 +18,7 @@ class Server:
         asymmetric_bits: int,
         symmetric_key_type: str,
         symmetric_bits: int,
-        key_file_index: str,
+        path_to_key: str,
     ) -> None:
         self.host: str
         self.port: int
@@ -33,8 +33,8 @@ class Server:
         self.symmetric_key_type = symmetric_key_type
         self.symmetric_bits = symmetric_bits
 
-        if key_file_index:
-            self.load_keys(key_file_index)
+        if path_to_key:
+            self.load_keys(path_to_key)
         else:
             self.generate_asymmetric_keys()
 
@@ -54,20 +54,20 @@ class Server:
         )
         return symmetric.key
 
-    def load_keys(self, key_file_number: str) -> None:
+    def load_keys(self, path_to_key: str) -> None:
         asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(
             self.asymmetric_key_type,
         )
 
         if not (
             path_to_public := pathlib.Path(
-                f"cryptography/src/data/asymmetric_public_key_{key_file_number}.txt"
+            f"{path_to_key}/public_key.txt"
             )
         ).exists():
             raise FileNotFoundError("Public key file not found")
         if not (
             path_to_private := pathlib.Path(
-                f"cryptography/src/data/asymmetric_private_key_{key_file_number}.txt"
+                f"{path_to_key}/private_key.txt"
             )
         ).exists():
             raise FileNotFoundError("Private key file not found")
@@ -265,12 +265,4 @@ class Server:
 
 
 if __name__ == "__main__":
-    server = Server(
-        address=("localhost", 55556),
-        asymmetric_key_type="RSA",
-        asymmetric_bits=1024,
-        symmetric_key_type="AES",
-        symmetric_bits=128,
-        key_file_index="2",
-    )
-    server.connection_handler(("localhost", 55555))
+    server = Server()
