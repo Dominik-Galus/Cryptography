@@ -15,8 +15,8 @@ def generate_key_to_file(key_type: str, length: int, output: str) -> None:
     private_filename: str = output + "private_key" if output is not None else "cryptography/src/data/private_key"
 
     key: Asymmetric = AsymmetricKeyFactory.create_key(key_type, length)
-    key_public = key.public_key
-    key_private = key.private_key
+    key_public: tuple[int, int] = key.public_key
+    key_private: tuple[int, int] = key.private_key
 
     with open(public_filename, "w+") as public_file:
         content: str = str(key_public[0]) + " " + str(key_public[1])
