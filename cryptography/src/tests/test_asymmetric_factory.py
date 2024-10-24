@@ -15,7 +15,7 @@ class TestAsymmetricFactory:
         ],
     )
     def test_factory(
-        self, asymmetric_key: Asymmetric, key_length: int, message: str
+        self, asymmetric_key: Asymmetric, key_length: int, message: str,
     ) -> None:
         asymmetric = AsymmetricKeyFactory.create_key(asymmetric_key, key_length)
         encrypted: str = asymmetric.encrypt(message)

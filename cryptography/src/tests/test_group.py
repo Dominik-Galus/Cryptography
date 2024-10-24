@@ -11,11 +11,11 @@ class TestGroup:
             [12, 54, 32, 12, 65, 11, 44, 23],
             [65, 88, 43, 33, 1443, 32, 123, -43],
             [11, 54, 64, 34, 76, 55, 12, 77],
-            [0, 34, 11, 11, 64, 43, 11, 57],
+            [0, 34, 11, 11, 64, 43, 11, 57], strict=False,
         ),
     )
     def test_add(
-        self, test_value1: int, test_value2: int, modulo: int, expected: int
+        self, test_value1: int, test_value2: int, modulo: int, expected: int,
     ) -> None:
         group = Group(modulo)
         result = group.add(test_value1, test_value2)

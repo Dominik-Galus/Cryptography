@@ -19,7 +19,7 @@ class Asymmetric(ABC):
     @staticmethod
     @abstractmethod
     def decrypt_with_known_key(
-        self, encrypted_message: str, private_key: tuple[int, int]
+        self, encrypted_message: str, private_key: tuple[int, int],
     ) -> str:
         pass
 

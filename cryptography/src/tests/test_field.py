@@ -17,7 +17,7 @@ class TestField:
         ],
     )
     def test_division(
-        self, test_value1: int, test_value2: int, modulo: int, expected: int
+        self, test_value1: int, test_value2: int, modulo: int, expected: int,
     ) -> None:
         field = Field(modulo)
         result = field.division(test_value1, test_value2)

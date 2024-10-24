@@ -36,14 +36,14 @@ class RSA(Asymmetric):
             pow(ord(char), public_key[0], public_key[1]) for char in message
         ]
         encrypted_message: str = "".join(
-            [str(num).zfill(len(str(public_key[1]))) for num in cipher]
+            [str(num).zfill(len(str(public_key[1]))) for num in cipher],
         )
 
         return encrypted_message
 
     @staticmethod
     def decrypt_with_known_key(
-        encrypted_message: str, private_key: tuple[int, int]
+        encrypted_message: str, private_key: tuple[int, int],
     ) -> str:
         block_size: int = len(str(private_key[1]))
         encrypted_numbers = [

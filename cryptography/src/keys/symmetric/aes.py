@@ -8,7 +8,7 @@ from cryptography.src.keys.symmetric.symmetric import Symmetric
 
 class AES(Symmetric):
     def __init__(
-        self, bits: int, aes_key: np.ndarray | list[str] | None = None
+        self, bits: int, aes_key: np.ndarray | list[str] | None = None,
     ) -> None:
         if bits not in [128, 192, 256]:
             raise ValueError("Wrong bits key length")
@@ -33,14 +33,14 @@ class AES(Symmetric):
             random.choice("0123456789abcdef") for _ in range(bytes_length * 2)
         )
         byte_array = np.array(
-            [int(hex_key[i : i + 2], 16) for i in range(0, len(hex_key), 2)]
+            [int(hex_key[i : i + 2], 16) for i in range(0, len(hex_key), 2)],
         )
         matrix = np.array([byte_array[i : i + 4] for i in range(0, len(byte_array), 4)])
         return matrix.T
 
     def key_expansion(self) -> None:
         self.expanded_key: np.ndarray = np.zeros(
-            (4 * (self.rounds + 1), 4), dtype=np.uint8
+            (4 * (self.rounds + 1), 4), dtype=np.uint8,
         )
 
         self.expanded_key[: self.key_columns] = self.key.T
@@ -132,7 +132,7 @@ class AES(Symmetric):
             self.add_round_key(self.rounds)
 
             encrypted_message += "".join(
-                [f"{num:02x}" for num in self.state.T.flatten()]
+                [f"{num:02x}" for num in self.state.T.flatten()],
             )
 
         return encrypted_message
@@ -172,7 +172,7 @@ class AES(Symmetric):
         for i in range(0, len(encrypted_message), 32):
             block: str = encrypted_message[i : i + 32]
             byte_array = np.array(
-                [int(block[j : j + 2], 16) for j in range(0, 32, 2)], dtype=np.uint8
+                [int(block[j : j + 2], 16) for j in range(0, 32, 2)], dtype=np.uint8,
             )
             self.state = byte_array.reshape(4, 4).T
 

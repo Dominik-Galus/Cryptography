@@ -1,7 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from cryptography.src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
 from cryptography.src.service.session import Session
 
@@ -93,7 +91,7 @@ class TestSession:
         mock_socket_instance.recv.return_value = b"encrypted message"
 
         with patch.object(
-            session, "decrypt_data", side_effect=["Decrypted message"]
+            session, "decrypt_data", side_effect=["Decrypted message"],
         ) as mock_decrypt:
             with patch("builtins.print") as mock_print:
                 session.receive_message()

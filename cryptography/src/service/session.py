@@ -44,13 +44,13 @@ class Session:
 
     def encrypt_data(self, data: str) -> str:
         symmetric_key: Symmetric = SymmetricKeyFactory.create_key(
-            key_type=self.symmetric_type, bits=self.bits, key=self.symmetric_key
+            key_type=self.symmetric_type, bits=self.bits, key=self.symmetric_key,
         )
         return symmetric_key.encrypt(data)
 
     def decrypt_data(self, data: str) -> str:
         symmetric_key: Symmetric = SymmetricKeyFactory.create_key(
-            key_type=self.symmetric_type, bits=self.bits, key=self.symmetric_key
+            key_type=self.symmetric_type, bits=self.bits, key=self.symmetric_key,
         )
         return symmetric_key.decrypt(data)
 

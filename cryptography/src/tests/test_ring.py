@@ -11,11 +11,11 @@ class TestRing:
             [12, 54, 32, 12, 65, 11, 44, 23],
             [65, 88, 43, 33, 1443, 32, 123, -43],
             [11, 54, 64, 34, 76, 55, 12, 77],
-            [10, 0, 32, 22, 11, 22, 0, 12],
+            [10, 0, 32, 22, 11, 22, 0, 12], strict=False,
         ),
     )
     def test_mul(
-        self, test_value1: int, test_value2: int, modulo: int, expected: int
+        self, test_value1: int, test_value2: int, modulo: int, expected: int,
     ) -> None:
         ring = Ring(modulo)
         result: int = ring.mul(test_value1, test_value2)

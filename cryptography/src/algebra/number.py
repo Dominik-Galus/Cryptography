@@ -12,28 +12,26 @@ class Number:
     def __add__(self, other: int | Self) -> Self:
         if type(other) is int:
             return Number(self.restriction.add(self.value, other), self.restriction)
-        elif (
+        if (
             type(self.restriction) is type(other.restriction)
             and self.restriction.modulo() == other.restriction.modulo()
         ):
             return Number(
-                self.restriction.add(self.value, other.value), self.restriction
+                self.restriction.add(self.value, other.value), self.restriction,
             )
-        else:
-            raise ValueError("Numbers can be added only with the same restriction")
+        raise ValueError("Numbers can be added only with the same restriction")
 
     def __mul__(self, other: int | Self) -> Self:
         if type(other) is int:
             return Number(self.restriction.mul(self.value, other), self.restriction)
-        elif (
+        if (
             type(self.restriction) is type(other.restriction)
             and self.restriction.modulo() == other.restriction.modulo()
         ):
             return Number(
-                self.restriction.mul(self.value, other.value), self.restriction
+                self.restriction.mul(self.value, other.value), self.restriction,
             )
-        else:
-            raise ValueError("Numbers can be multiplied only with the same restriction")
+        raise ValueError("Numbers can be multiplied only with the same restriction")
 
     def gcd(self, number: int) -> int:
         return gcd(self.value, number)

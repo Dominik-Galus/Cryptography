@@ -61,13 +61,13 @@ class Server:
 
         if not (
             path_to_public := pathlib.Path(
-            f"{path_to_key}/public_key.txt"
+            f"{path_to_key}/public_key.txt",
             )
         ).exists():
             raise FileNotFoundError("Public key file not found")
         if not (
             path_to_private := pathlib.Path(
-                f"{path_to_key}/private_key.txt"
+                f"{path_to_key}/private_key.txt",
             )
         ).exists():
             raise FileNotFoundError("Private key file not found")
@@ -90,7 +90,7 @@ class Server:
 
     def connection_handler(self, address: tuple[str, int]) -> None:
         connecting_socket: socket.socket = socket.socket(
-            socket.AF_INET, socket.SOCK_STREAM
+            socket.AF_INET, socket.SOCK_STREAM,
         )
 
         try:
@@ -115,7 +115,7 @@ class Server:
                     self.sessions.append(sc)
                     self.send_decrypted_symmetric_data_to_session(key, sc)
                     threading.Thread(
-                        target=self.receive_data_from_session, args=(sc,)
+                        target=self.receive_data_from_session, args=(sc,),
                     ).start()
 
         except Exception as e:
@@ -131,7 +131,7 @@ class Server:
                     self.server_connection = sc
                     print("Connected with the server")
                     self.send_encrypted_symmetric_key_to_server(
-                        symmetric_key, response[1]
+                        symmetric_key, response[1],
                     )
                     threading.Thread(target=self.receive_data_from_server).start()
                 else:
@@ -139,7 +139,7 @@ class Server:
                     self.sessions.append(sc)
                     self.send_symmetric_data_to_session(symmetric_key, sc)
                     threading.Thread(
-                        target=self.receive_data_from_session, args=(sc,)
+                        target=self.receive_data_from_session, args=(sc,),
                     ).start()
 
     def send_asymmetric_public_key_to_server(self) -> None:
@@ -148,19 +148,19 @@ class Server:
                 str(self.asymmetric_public_key[0]),
                 str(self.asymmetric_public_key[1]),
                 self.asymmetric_key_type,
-            ]
+            ],
         )
         self.server_connection.sendall(asymmetric_public_key.encode())
 
     def send_encrypted_symmetric_key_to_server(
-        self, symmetric_key: np.ndarray, asymmetric_public_key: str
+        self, symmetric_key: np.ndarray, asymmetric_public_key: str,
     ) -> None:
         asymmetric_public_key: list[str] = asymmetric_public_key.split(" ")
         e: int = int(asymmetric_public_key[0])
         n: int = int(asymmetric_public_key[1])
         asymmetric_key_type = asymmetric_public_key[2]
         encrypted_symmetric_key: str = self.encrypt_symmetric_key(
-            symmetric_key, (e, n), asymmetric_key_type
+            symmetric_key, (e, n), asymmetric_key_type,
         )
 
         self.server_connection.sendall(encrypted_symmetric_key.encode())
@@ -174,11 +174,11 @@ class Server:
         other_public_asymmetric_key, other_n = asymmetric_public_key
 
         other_asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(
-            asymmetric_key_type
+            asymmetric_key_type,
         )
         encrypted_symmetric_key: list[str] = [
             other_asymmetric_key.encrypt_with_known_key(
-                str(byte), (other_public_asymmetric_key, other_n)
+                str(byte), (other_public_asymmetric_key, other_n),
             )
             for byte in symmetric_key.flatten()
         ]
@@ -201,10 +201,10 @@ class Server:
                 break
 
     def send_decrypted_symmetric_data_to_session(
-        self, encrypted_symmetric_key: str, session: socket.socket
+        self, encrypted_symmetric_key: str, session: socket.socket,
     ) -> None:
         asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(
-            self.asymmetric_key_type
+            self.asymmetric_key_type,
         )
 
         encrypted_symmetric_key: list[str] = encrypted_symmetric_key.split(" ")
@@ -215,17 +215,17 @@ class Server:
         symmetric_key: str = " ".join(symmetric_key)
 
         symmetric_data: str = "-".join(
-            [symmetric_key, self.symmetric_key_type, str(self.symmetric_bits)]
+            [symmetric_key, self.symmetric_key_type, str(self.symmetric_bits)],
         )
 
         session.send(symmetric_data.encode())
 
     def send_symmetric_data_to_session(
-        self, symmetric_key: np.ndarray, session: socket.socket
+        self, symmetric_key: np.ndarray, session: socket.socket,
     ) -> None:
         symmetric_key: str = " ".join([str(byte) for byte in symmetric_key.flatten()])
         symmetric_data: str = "-".join(
-            [symmetric_key, self.symmetric_key_type, str(self.symmetric_bits)]
+            [symmetric_key, self.symmetric_key_type, str(self.symmetric_bits)],
         )
 
         session.send(symmetric_data.encode())
@@ -241,7 +241,7 @@ class Server:
         while True:
             try:
                 message = self.server_connection.recv(
-                    self.asymmetric_bits * 16
+                    self.asymmetric_bits * 16,
                 ).decode()
                 if message:
                     print(f"Received from server: {message}")
@@ -252,7 +252,7 @@ class Server:
                 break
 
     def broadcast_to_sessions(
-        self, message: str, sender_session: socket.socket
+        self, message: str, sender_session: socket.socket,
     ) -> None:
         for session in self.sessions:
             if session != sender_session:

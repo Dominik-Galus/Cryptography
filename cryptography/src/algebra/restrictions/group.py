@@ -31,7 +31,7 @@ class Group(Restriction):
         return value
 
     def mul(self, value1: int, value2: int) -> int:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def modulo(self) -> int:
         return self.mod
