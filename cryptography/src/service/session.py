@@ -58,7 +58,6 @@ class Session:
         while True:
             try:
                 message: str = input("")
-                print(message)
                 message = self.encrypt_data(message)
                 if not message:
                     raise ConnectionResetError("Session input closed")
