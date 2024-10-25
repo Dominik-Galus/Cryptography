@@ -61,13 +61,13 @@ class Server:
 
         if not (
             path_to_public := pathlib.Path(
-            f"{path_to_key}/public_key.txt",
+            f"{path_to_key}/public_key",
             )
         ).exists():
             raise FileNotFoundError("Public key file not found")
         if not (
             path_to_private := pathlib.Path(
-                f"{path_to_key}/private_key.txt",
+                f"{path_to_key}/private_key",
             )
         ).exists():
             raise FileNotFoundError("Private key file not found")
@@ -118,7 +118,7 @@ class Server:
                         target=self.receive_data_from_session, args=(sc,),
                     ).start()
 
-        except Exception as e:
+        except ConnectionRefusedError as e:
             symmetric_key: np.ndarray = self.generate_symmetric_key()
             print(f"Failed to connect to: {address[0]}:{address[1]} ({e})")
             print("Waiting for server to connect...")
@@ -194,7 +194,7 @@ class Server:
                     raise ConnectionResetError("Session disconnected")
                 if self.server_connection:
                     self.forward_data_to_server(message)
-            except Exception as e:
+            except ConnectionResetError as e:
                 print(f"An error occurred while receiving data from session: ({e})")
                 self.sessions.remove(session)
                 session.close()
@@ -265,4 +265,4 @@ class Server:
 
 
 if __name__ == "__main__":
-    server = Server()
+    server = Server(None)
