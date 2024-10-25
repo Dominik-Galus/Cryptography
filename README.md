@@ -53,6 +53,10 @@ server.connection_handler(address=("localhost", 55556))
 ```
 We should see something like that:
 
+![Screenshot 2024-10-26 00 13 11](https://github.com/user-attachments/assets/23a1ecbf-1ebf-4f27-b106-ec9cac70a5c1)
+
+When there is existing server before ours on address we provided, it should connect instantly with another server
+
 > Note: To server work properly you need to call the method connection_handler for server to start search for another server to connect.
 
 If you want to generate the asymmetric keys in advance and store them in the path you want you need to call in command line:
@@ -67,4 +71,10 @@ from cryptography.src.service.session import Session
 
 session = Session(server_address=("localhost", 55555))
 ```
-Assuming that there will be a second server that connects to ours, the session will wait until they finally exchange the necessary information
+Assuming that there will be a second server that connects to ours, the session will wait until they finally exchange the necessary info:
+
+![Screenshot 2024-10-26 00 20 21](https://github.com/user-attachments/assets/06f9c589-da82-4723-b5d6-f850edadcea0)
+
+And now the sessions can safely exchange messages among themselves:
+
+![Screenshot 2024-10-26 00 23 29](https://github.com/user-attachments/assets/8c55b89c-d7d4-449c-a293-f79fb244d7d0)
