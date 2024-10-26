@@ -11,8 +11,8 @@ from cryptography.src.keys.factories.asymmetrickeyfactory import AsymmetricKeyFa
 @click.option("-o", "--output", type=click.Path(exists=False), help="The path to the file that will be containing asymmetric key",
               required=False)
 def generate_key_to_file(key_type: str, length: int, output: str) -> None:
-    public_filename: str = output + "public_key" if output is not None else "cryptography/src/data/public_key"
-    private_filename: str = output + "private_key" if output is not None else "cryptography/src/data/private_key"
+    public_filename: str = output + "public_key.txt" if output is not None else "cryptography/src/data/public_key.txt"
+    private_filename: str = output + "private_key.txt" if output is not None else "cryptography/src/data/private_key.txt"
 
     key: Asymmetric = AsymmetricKeyFactory.create_key(key_type, length)
     key_public: tuple[int, int] = key.public_key

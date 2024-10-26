@@ -58,16 +58,17 @@ class Server:
         asymmetric_key: Asymmetric = AsymmetricKeyFactory.get_key(
             self.asymmetric_key_type,
         )
-
+        if path_to_key.endswith("/"):
+            path_to_key = path_to_key[:-1]
         if not (
             path_to_public := pathlib.Path(
-            f"{path_to_key}/public_key",
+            f"{path_to_key}/public_key.txt",
             )
         ).exists():
             raise FileNotFoundError("Public key file not found")
         if not (
             path_to_private := pathlib.Path(
-                f"{path_to_key}/private_key",
+                f"{path_to_key}/private_key.txt",
             )
         ).exists():
             raise FileNotFoundError("Private key file not found")

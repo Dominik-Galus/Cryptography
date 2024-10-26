@@ -46,7 +46,7 @@ server = Server(
     asymmetric_bits=1024,
     symmetric_key_type="AES",
     symmetric_bits=128,
-    path_to_key=""
+    path_to_key=None
 )
 
 server.connection_handler(address=("localhost", 55556))
