@@ -17,7 +17,7 @@ The directory of project looks like this:
 │   ├── cli             <- Cli scripts
 │   └── src             <- Source code
 │       ├── algebra             <- Algebra required for keys
-│       │   └── restrictions            <- Modulo group theory
+│       │   └── restrictions            <- Modulo group theory and more
 │       ├── data                <- Data for Scripts
 │       ├── keys                <- All kind of keys
 │       │   ├── asymmetric              <- Symmetric keys
@@ -36,7 +36,7 @@ First, the servers establish a connection to exchange public asymmetric keys. In
 Once both servers have access to the symmetric key, they can distribute it to their respective sessions. This shared key allows sessions to encrypt data intended for another session. When transmitting data, a session encrypts its message and sends it to its server. This server forwards the encrypted message to the connected server, which then delivers the message to the intended session. The recipient session can then decrypt the message using the shared symmetric key.
 
 ## Example
-Getting started, we first need to create and turn on the server, so create a file `server.py`:
+Getting started, we first need to create and turn on the server, so create for example a file `server.py`:
 ```
 from cryptography.src.service.server import Server
 
