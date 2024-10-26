@@ -1,4 +1,4 @@
-# Cryptography
+# cryptography
 
 Source Code: [cryptography](https://github.com/Dominik-Galus/Cryptography/)
 - - -
