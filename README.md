@@ -61,9 +61,18 @@ When there is existing server before ours on address we provided, it should conn
 
 If you want to generate the asymmetric keys in advance and store them in the path you want you need to call in command line:
 ```
-$ key-gen --key_type RSA -L 1024 -o directory/
+$ key-gen [--key_type] [-L KEY_LENGTH] [-o PATH_TO_DIRECTORY]
 ```
-> For more specific information, call in the command line `key-gen --help` there are also written available keys
+```
+Usage: key-gen [OPTIONS]
+
+Options:
+  --key_type [RSA]      The type of asymmetric key to be generate  [required]
+  -L, --length INTEGER  The length of asymmetric key  [required]
+  -o, --output PATH     The path to the file that will be containing
+                        asymmetric key
+  --help                Show this message and exit.
+```
 
 If we dealt with that we can now instantiate the session in another .py file:
 ```
