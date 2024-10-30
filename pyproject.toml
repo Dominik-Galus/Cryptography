@@ -13,7 +13,6 @@ readme = "README.md"
 requires-python = ">=3.11.2"
 dependencies = [
     "numpy==2.0.1",
-    "pytest==8.3.2"
 ]
 
 [project.scripts]
@@ -26,3 +25,10 @@ Issues = "https://github.com/Dominik-Galus/Cryptography/issues"
 
 [tool.ruff]
 select = ["ALL"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "--strict-config",
+    "--strict-markers"
+]
