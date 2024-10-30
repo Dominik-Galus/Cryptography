@@ -23,9 +23,9 @@ The directory of project looks like this:
 │       │   ├── asymmetric              <- Symmetric keys
 │       │   ├── factories               <- Key factories
 │       │   └── symmetric               <- Symmetric keys
-│       ├── service             <- Service directory (Server, session)
-│       └── tests               <- Tests of any kind
+│       └── service             <- Service directory (Server, session)
 ├── .gitignore          <- List of files ignored by git
+├── tests               <- Tests of any kind
 ├── pyproject.toml 
 └── README.md
 ```
