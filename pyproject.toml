@@ -19,9 +19,9 @@ dependencies = [
 key-gen = "cryptography.cli.key_gen:generate_key_to_file"
 
 [project.urls]
-Homepage = "https://github.com/Dominik-Galus/Cryptography"
-Repository = "https://github.com/Dominik-Galus/Cryptography/"
-Issues = "https://github.com/Dominik-Galus/Cryptography/issues"
+Homepage = "https://github.com/Dominik-Galus/cryptography"
+Repository = "https://github.com/Dominik-Galus/cryptography/"
+Issues = "https://github.com/Dominik-Galus/cryptography/issues"
 
 [tool.ruff]
 select = ["ALL"]
