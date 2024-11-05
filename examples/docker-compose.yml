@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  server1:
+    build:
+      context: ..
+      dockerfile: examples/server_1/Dockerfile
+    command: python3 ./server_1.py
+    networks:
+      - app-network
+    tty: true
+    stdin_open: true
+    ports:
+      - "55555:55555"
+
+  server2:
+    build:
+      context: ..
+      dockerfile: examples/server_2/Dockerfile
+    command: python3 ./server_2.py
+    networks:
+      - app-network
+    tty: true
+    stdin_open: true
+    ports:
+      - "55556:55556"
+
+  client1:
+    build:
+      context: ..
+      dockerfile: examples/client_1/Dockerfile
+    command: python3 ./client_1.py
+    networks:
+      - app-network
+    depends_on:
+      - server1
+    tty: true
+    stdin_open: true
+
+  client2:
+    build:
+      context: ..
+      dockerfile: examples/client_2/Dockerfile
+    command: python3 ./client_2.py
+    networks:
+      - app-network  
+    depends_on:
+      - server2
+    tty: true
+    stdin_open: true
+
+networks:
+  app-network:
+    driver: bridge
