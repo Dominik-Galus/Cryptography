@@ -1,3 +1,4 @@
+import logging
 import pathlib
 import socket
 import threading
@@ -12,19 +13,27 @@ if TYPE_CHECKING:
     from cryptography.keys.asymmetric.asymmetric import Asymmetric
     from cryptography.keys.symmetric.symmetric import Symmetric
 
+DEFAULT_SERVER_ADDRESS: tuple[str, int] = ("localhost", 55560)
+
 
 class Server:
     def __init__(
         self,
-        address: tuple[str, int],
+        address: tuple[str, int] | None,
         asymmetric_key_type: str,
         asymmetric_bits: int,
         symmetric_key_type: str,
         symmetric_bits: int,
-        path_to_key: str,
+        path_to_key: str | None,
     ) -> None:
+        self.logger: logging.Logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
+
         self.host: str
         self.port: int
+
+        if address is None:
+            address = DEFAULT_SERVER_ADDRESS
+
         self.host, self.port = address
         self.server_connection: socket.socket = None
         self.server_socket: socket.socket = None
@@ -78,12 +87,12 @@ class Server:
             msg: str = "Private key file not found"
             raise FileNotFoundError(msg)
 
-        with open(path_to_public) as key_file:
+        with pathlib.Path.open(path_to_public) as key_file:
             self.asymmetric_public_key = asymmetric_key.load_from_file(
                 content=key_file.read(),
             )
 
-        with open(path_to_private) as key_file:
+        with pathlib.Path.open(path_to_private) as key_file:
             self.asymmetric_private_key = asymmetric_key.load_from_file(
                 content=key_file.read(),
             )
@@ -92,7 +101,7 @@ class Server:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen()
-        print(f"Server is listening on {self.host}:{self.port}")
+        logging.info("Server is listening on %s:%s", self.host, self.port)
 
     def connection_handler(self, address: tuple[str, int]) -> None:
         connecting_socket: socket.socket = socket.socket(
@@ -100,7 +109,7 @@ class Server:
         )
 
         try:
-            print(f"Trying to connect to {address[0]}:{address[1]}...")
+            logging.info("Trying to connect to %s:%s...", address[0], address[1])
             connecting_socket.connect((address[0], address[1]))
 
             self.server_connection = connecting_socket
@@ -109,7 +118,7 @@ class Server:
             key: str = self.server_connection.recv(self.asymmetric_bits * 16).decode()
 
             threading.Thread(target=self.receive_data_from_server).start()
-            print("Connected with server")
+            logging.info("Connected with server")
 
             while True:
                 sc, sockname = self.server_socket.accept()
@@ -117,17 +126,17 @@ class Server:
                 response = sc.recv(1024).decode()
 
                 if response == "Session":
-                    print(f"Connected with session at {sockname}")
+                    logging.info("Connected with session at %s", sockname)
                     self.sessions.append(sc)
                     self.send_decrypted_symmetric_data_to_session(key, sc)
                     threading.Thread(
                         target=self.receive_data_from_session, args=(sc,),
                     ).start()
 
-        except ConnectionRefusedError as e:
+        except ConnectionRefusedError:
             symmetric_key: np.ndarray = self.generate_symmetric_key()
-            print(f"Failed to connect to: {address[0]}:{address[1]} ({e})")
-            print("Waiting for server to connect...")
+            logging.info("Failed to connect to: %s:%s", address[0], address[1])
+            logging.info("Waiting for server to connect...")
 
             while True:
                 sc, sockname = self.server_socket.accept()
@@ -135,13 +144,13 @@ class Server:
                 response: list[str] = received.split("-")
                 if response[0] == str(address[1]):
                     self.server_connection = sc
-                    print("Connected with the server")
+                    logging.info("Connected with the server")
                     self.send_encrypted_symmetric_key_to_server(
                         symmetric_key, response[1],
                     )
                     threading.Thread(target=self.receive_data_from_server).start()
                 else:
-                    print(f"Connected with session at {sockname}")
+                    logging.info("Connected with session at %s", sockname)
                     self.sessions.append(sc)
                     self.send_symmetric_data_to_session(symmetric_key, sc)
                     threading.Thread(
@@ -198,11 +207,11 @@ class Server:
                 message = session.recv(self.asymmetric_bits * 16).decode()
                 if not message:
                     msg: str = "Session disconnected"
-                    raise ConnectionResetError(msg)
+                    raise ConnectionRefusedError(msg)
                 if self.server_connection:
                     self.forward_data_to_server(message)
-            except ConnectionResetError as e:
-                print(f"An error occurred while receiving data from session: ({e})")
+            except Exception as e:
+                logging.exception("An error occurred while receiving data from session: %s", exc_info=e)
                 self.sessions.remove(session)
                 session.close()
                 break
@@ -240,9 +249,9 @@ class Server:
     def forward_data_to_server(self, message: str) -> None:
         try:
             self.server_connection.send(message.encode())
-            print(f"Forwarded message to connected server: {message}")
+            logging.info("Forwarded message to connected server: %s", message)
         except Exception as e:
-            print(f"An error occurred forwarding a data to server: ({e})")
+            logging.exception("An error occurred forwarding a data to server: $s", exc_info=e)
 
     def receive_data_from_server(self) -> None:
         while True:
@@ -251,10 +260,10 @@ class Server:
                     self.asymmetric_bits * 16,
                 ).decode()
                 if message:
-                    print(f"Received from server: {message}")
+                    logging.info("Received from server: %s", message)
                     self.broadcast_to_sessions(message, sender_session=None)
             except Exception as e:
-                print(f"An error occurred while receiving data from server: ({e})")
+                logging.exception("An error occurred while receiving data from server: %s", exc_info=e)
                 self.server_connection.close()
                 break
 
@@ -266,7 +275,7 @@ class Server:
                 try:
                     session.send(message.encode())
                 except Exception as e:
-                    print(f"An error occurred while broadcasting to sessions: ({e})")
+                    logging.exception("An error occurred while broadcasting to sessions: %s", exc_info=e)
                     self.sessions.remove(session)
                     session.close()
 

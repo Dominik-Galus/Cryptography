@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 
 import numpy as np
+from pydantic import BaseModel
 
 
-class Symmetric(ABC):
+class Symmetric(ABC, BaseModel):
 
     @abstractmethod
     def encrypt(self, message: str) -> str:

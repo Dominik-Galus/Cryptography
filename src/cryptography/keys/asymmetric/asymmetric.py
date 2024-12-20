@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 
+from pydantic import BaseModel
 
-class Asymmetric(ABC):
+
+class Asymmetric(ABC, BaseModel):
 
     @abstractmethod
     def encrypt(self, message: str) -> str:

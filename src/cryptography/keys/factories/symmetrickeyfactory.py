@@ -9,7 +9,7 @@ from cryptography.keys.symmetric.symmetric import Symmetric
 
 class SymmetricKeyFactory(KeyFactory):
 
-    key_type_map: ClassVar[dict[str, Symmetric]] = {"AES": AES}
+    key_type_map: ClassVar[dict[str, type[Symmetric]]] = {"AES": AES}
 
     @staticmethod
     def create_key(key_type: str, bits: int, key: np.ndarray | list[str]=None) -> Symmetric:
