@@ -1,6 +1,8 @@
 from math import lcm
 from random import randrange
 
+from pydantic import Field
+
 from cryptography.algebra.number import Number
 from cryptography.algebra.pure import is_prime
 from cryptography.algebra.restrictions.ring import Ring
@@ -8,10 +10,14 @@ from cryptography.keys.asymmetric.asymmetric import Asymmetric
 
 
 class RSA(Asymmetric):
+    n: int = Field(default=0)
+    p: int = Field(default=0)
+    q: int = Field(default=0)
 
     def __init__(self, bits: int) -> None:
+        super().__init__(private_key=(0, 0), public_key=(0, 0))
         self.n = self.generate_n(bits)
-        self._public_key, self._private_key = self.generate_keys()
+        self.public_key, self.private_key = self.generate_keys()
 
     def encrypt(self, message: str) -> str:
         e, n = self.public_key
@@ -56,19 +62,19 @@ class RSA(Asymmetric):
 
     def generate_keys(self) -> tuple[tuple[int, int]]:
 
-        self.phi: int = lcm(self.p - 1, self.q - 1)
-        self.ring = Ring(self.phi)
+        phi: int = lcm(self.p - 1, self.q - 1)
+        ring = Ring(phi)
 
-        candidate: int = randrange(1, self.phi)
-        e = Number(candidate, self.ring)
-        g = e.gcd(self.phi)
+        candidate: int = randrange(1, phi)
+        e = Number(candidate, ring)
+        g = e.gcd(phi)
         while g != 1:
-            candidate = randrange(1, self.phi)
-            e = Number(candidate, self.ring)
-            g = e.gcd(self.phi)
+            candidate = randrange(1, phi)
+            e = Number(candidate, ring)
+            g = e.gcd(phi)
 
-        temp = self.ring.mult_inverse(e.value)
-        d = Number(temp, self.ring)
+        temp = ring.mult_inverse(e.value)
+        d = Number(temp, ring)
 
         return ((e.value, self.n), (d.value, self.n))
 
@@ -82,14 +88,6 @@ class RSA(Asymmetric):
         while not is_prime(p):
             p: int = randrange((2 ** (bits - 1)) + 1, (2**bits) - 1)
         return p
-
-    @property
-    def private_key(self) -> tuple[int, int]:
-        return self._private_key
-
-    @property
-    def public_key(self) -> tuple[int, int]:
-        return self._public_key
 
     @staticmethod
     def load_from_file(content: str) -> tuple[int, int]:

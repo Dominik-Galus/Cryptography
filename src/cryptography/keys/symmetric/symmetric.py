@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 
 import numpy as np
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class Symmetric(ABC, BaseModel):
+    key: np.ndarray
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @abstractmethod
     def encrypt(self, message: str) -> str:
@@ -12,9 +14,4 @@ class Symmetric(ABC, BaseModel):
 
     @abstractmethod
     def decrypt(self, message: str) -> str:
-        pass
-
-    @property
-    @abstractmethod
-    def key(self) -> np.ndarray:
         pass

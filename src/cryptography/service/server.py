@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from cryptography.configs.logging_config import setup_logging
 from cryptography.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
 from cryptography.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
 
@@ -27,6 +28,7 @@ class Server:
         path_to_key: str | None,
     ) -> None:
         self.logger: logging.Logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
+        setup_logging("INFO")
 
         self.host: str
         self.port: int
@@ -210,8 +212,8 @@ class Server:
                     raise ConnectionRefusedError(msg)
                 if self.server_connection:
                     self.forward_data_to_server(message)
-            except Exception as e:
-                logging.exception("An error occurred while receiving data from session: %s", exc_info=e)
+            except Exception:
+                logging.exception("An error occurred while receiving data from session")
                 self.sessions.remove(session)
                 session.close()
                 break
@@ -250,8 +252,8 @@ class Server:
         try:
             self.server_connection.send(message.encode())
             logging.info("Forwarded message to connected server: %s", message)
-        except Exception as e:
-            logging.exception("An error occurred forwarding a data to server: $s", exc_info=e)
+        except Exception:
+            logging.exception("An error occurred forwarding a data to server")
 
     def receive_data_from_server(self) -> None:
         while True:

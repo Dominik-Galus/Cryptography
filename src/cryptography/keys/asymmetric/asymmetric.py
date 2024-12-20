@@ -1,9 +1,13 @@
 from abc import ABC, abstractmethod
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class Asymmetric(ABC, BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    private_key: tuple[int, int] | int
+    public_key: tuple[int, int] | int
 
     @abstractmethod
     def encrypt(self, message: str) -> str:
@@ -23,16 +27,6 @@ class Asymmetric(ABC, BaseModel):
     def decrypt_with_known_key(
         encrypted_message: str, private_key: tuple[int, int],
     ) -> str:
-        pass
-
-    @property
-    @abstractmethod
-    def private_key(self) -> tuple[int, int]:
-        pass
-
-    @property
-    @abstractmethod
-    def public_key(self) -> tuple[int, int]:
         pass
 
     @staticmethod

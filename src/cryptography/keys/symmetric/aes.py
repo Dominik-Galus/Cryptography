@@ -1,24 +1,31 @@
 import random
 
 import numpy as np
+from pydantic import Field
 
 from cryptography.data.aes_constants import inv_s_box, rcon, s_box
 from cryptography.keys.symmetric.symmetric import Symmetric
 
 
 class AES(Symmetric):
+    key_columns: int = Field(default=0)
+    rounds: int = Field(default=0)
+    expanded_key: np.ndarray = Field(default=np.empty(0))
+    state: np.ndarray = Field(default=np.empty(0))
+
     def __init__(
         self, bits: int, aes_key: np.ndarray | list[str] | None = None,
     ) -> None:
+        super().__init__(key=np.empty(0))
         if bits not in [128, 192, 256]:
             msg: str = "Wrong bits key length"
             raise ValueError(msg)
         self.key_columns: int = bits // 32
         self.rounds: int = {128: 10, 192: 12, 256: 14}[bits]
         if aes_key is not None:
-            self._key = np.array(aes_key, dtype=np.uint8).reshape(4, self.key_columns)
+            self.key = np.array(aes_key, dtype=np.uint8).reshape(4, self.key_columns)
         else:
-            self._key = self.generate_key(bits)
+            self.key = self.generate_key(bits)
 
         self.key_expansion()
 
@@ -191,10 +198,6 @@ class AES(Symmetric):
             decrypted_text += "".join([chr(byte) for byte in self.state.T.flatten()])
 
         return decrypted_text.rstrip()
-
-    @property
-    def key(self) -> np.ndarray:
-        return self._key
 
 
 if __name__ == "__main__":
