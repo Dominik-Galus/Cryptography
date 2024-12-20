@@ -3,14 +3,19 @@ import threading
 import time
 from typing import TYPE_CHECKING
 
+from cryptography.configs.connection_config import SESSION_MESSAGE
+from cryptography.configs.logging_config import setup_logging
 from cryptography.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
 
 if TYPE_CHECKING:
+    import logging
+
     from cryptography.keys.symmetric.symmetric import Symmetric
 
-
 class Session:
-    def __init__(self, server_address: tuple[str, int]) -> None:
+    def __init__(self, server_address: tuple[str, int], logging_config: str = "INFO") -> None:
+        logger_name: str = f"{__name__}.{__class__.__name__}"
+        self.logger: logging.Logger = setup_logging(logger_name, logging_config)
         self.session_socket: socket.socket = None
         self.symmetric_key: list[str] = None
         self.bits: int = None
@@ -22,17 +27,17 @@ class Session:
             try:
                 self.session_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.session_socket.connect((server_address[0], server_address[1]))
-                print(f"Connected with server {server_address[0]}:{server_address[1]}")
+                self.logger.info("Connected with server %s:%s",server_address[0],server_address[1])
 
-                self.session_socket.send(b"Session")
+                self.session_socket.send(SESSION_MESSAGE.encode())
 
                 self.retrieve_key()
 
                 threading.Thread(target=self.write_message).start()
                 threading.Thread(target=self.receive_message).start()
                 break
-            except:
-                print("Failed to connect to server. Reconnecting...")
+            except Exception:
+                self.logger.info("Failed to connect to server. Reconnecting...")
                 time.sleep(3)
 
     def retrieve_key(self) -> None:
@@ -68,7 +73,7 @@ class Session:
 
                 self.session_socket.send(message.encode())
             except Exception as e:
-                print(f"An error occurred with writing message: ({e})")
+                self.logger.exception("An error occurred with writing message", exc_info=e)
                 self.session_socket.close()
                 break
 
@@ -81,9 +86,9 @@ class Session:
                     msg: str = "Server disconnected"
                     raise ConnectionResetError(msg)
 
-                print(f"Guest: {message}")
+                self.logger.info("Guest: %s", message)
             except:
-                print("Problem occurred with receiving message from server")
+                self.logger.info("Problem occurred with receiving message from server")
                 self.session_socket.close()
                 break
 

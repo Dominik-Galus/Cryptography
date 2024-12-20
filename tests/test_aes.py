@@ -36,7 +36,7 @@ class TestAES:
         decrypted: str = aes.decrypt(encrypted)
         assert decrypted == message
 
-        aes2 = AES(key_length, aes._key)
+        aes2 = AES(key_length, aes.key)
         decrypted = aes2.decrypt(encrypted)
         assert decrypted == message
 

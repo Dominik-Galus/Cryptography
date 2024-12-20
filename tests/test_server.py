@@ -6,20 +6,18 @@ import pytest
 from cryptography.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
 from cryptography.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
 from cryptography.service.server import Server
+import contextlib
 
 
 class TestServer:
     @pytest.fixture
     def server_instance(self) -> Server:
-        server = Server(
+        return Server(
             address=("localhost", 55556),
-            asymmetric_key_type="RSA",
-            asymmetric_bits=1024,
-            symmetric_key_type="AES",
-            symmetric_bits=128,
+            asymmetric_key_data=("RSA", 1024),
+            symmetric_key_data=("AES", 128),
             path_to_key=None,
         )
-        return server
 
     @patch("socket.socket")
     def test_start_server(self, mock_sock: MagicMock, server_instance: Server) -> None:
@@ -120,11 +118,9 @@ class TestServer:
             ) as mock_send_key:
                 mock_send_key.return_value = b"123456789 987654321 RSA"
 
-                with patch("threading.Thread") as mock_thread:
-                    try:
+                with patch("threading.Thread"):
+                    with contextlib.suppress(StopIteration):
                         server_instance.connection_handler(("localhost", 55555))
-                    except StopIteration:
-                        pass
 
                     mock_server_conn_instance.sendall.assert_called_with(
                         f"{server_instance.port}-".encode(),

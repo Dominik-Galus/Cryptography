@@ -10,25 +10,6 @@ Create and activate a [virtual environment](https://docs.python.org/3/library/ve
 $ pip install .
 ```
 
-## Project Structure
-The directory of project looks like this:
-```plaintext
-├── cryptography
-│   ├── cli             <- Cli scripts
-│   └── src             <- Source code
-│       ├── algebra             <- Algebra required for keys
-│       │   └── restrictions            <- Modulo group theory and more
-│       ├── data                <- Data for Scripts
-│       ├── keys                <- All kind of keys
-│       │   ├── asymmetric              <- Symmetric keys
-│       │   ├── factories               <- Key factories
-│       │   └── symmetric               <- Symmetric keys
-│       └── service             <- Service directory (Server, session)
-├── tests               <- Tests of any kind
-├── .gitignore          <- List of files ignored by git
-├── pyproject.toml 
-└── README.md
-```
 
 ## How it works
 First, the servers establish a connection to exchange public asymmetric keys. In this process, one server provides its public key, enabling the other server to encrypt a generated symmetric key and return it securely as an encrypted message. The receiving server then decrypts the symmetric key using its private key.
@@ -42,11 +23,9 @@ from cryptography.src.service.server import Server
 
 server = Server(
     address=("localhost", 55555),
-    asymmetric_key_type="RSA",
-    asymmetric_bits=1024,
-    symmetric_key_type="AES",
-    symmetric_bits=128,
-    path_to_key=None
+    asymmetric_key_data=("RSA", 1024),
+    symmetric_key_data=("AES, 128),
+    path_to_key=None,
 )
 
 server.connection_handler(address=("localhost", 55556))

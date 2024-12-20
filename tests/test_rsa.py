@@ -48,6 +48,6 @@ class TestRSA:
         decrypted: str = rsa.decrypt(encrypted)
         assert decrypted == message
 
-        encrypted: str = RSA.encrypt_with_known_key(message, rsa._public_key)
-        decrypted: str = RSA.decrypt_with_known_key(encrypted, rsa._private_key)
+        encrypted: str = RSA.encrypt_with_known_key(message, rsa.public_key)
+        decrypted: str = RSA.decrypt_with_known_key(encrypted, rsa.private_key)
         assert decrypted == message

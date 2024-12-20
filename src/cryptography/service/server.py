@@ -1,4 +1,4 @@
-import logging
+import json
 import pathlib
 import socket
 import threading
@@ -6,30 +6,30 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+import cryptography.configs.connection_config as conn
 from cryptography.configs.logging_config import setup_logging
 from cryptography.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
 from cryptography.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
 
 if TYPE_CHECKING:
+    import logging
+
     from cryptography.keys.asymmetric.asymmetric import Asymmetric
     from cryptography.keys.symmetric.symmetric import Symmetric
 
 DEFAULT_SERVER_ADDRESS: tuple[str, int] = ("localhost", 55560)
 
-
 class Server:
     def __init__(
         self,
         address: tuple[str, int] | None,
-        asymmetric_key_type: str,
-        asymmetric_bits: int,
-        symmetric_key_type: str,
-        symmetric_bits: int,
+        asymmetric_key_data: tuple[str, int],
+        symmetric_key_data: tuple[str, int],
         path_to_key: str | None,
+        logging_level: str = "INFO",
     ) -> None:
-        self.logger: logging.Logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
-        setup_logging("INFO")
-
+        logger_name: str = f"{__name__}.{__class__.__name__}"
+        self.logger: logging.Logger = setup_logging(logger_name, log_level=logging_level)
         self.host: str
         self.port: int
 
@@ -41,6 +41,9 @@ class Server:
         self.server_socket: socket.socket = None
         self.start_server()
         self.sessions: list[socket.socket] = []
+
+        asymmetric_key_type, asymmetric_bits = asymmetric_key_data
+        symmetric_key_type, symmetric_bits = symmetric_key_data
 
         self.asymmetric_key_type = asymmetric_key_type
         self.asymmetric_bits = asymmetric_bits
@@ -103,7 +106,7 @@ class Server:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen()
-        logging.info("Server is listening on %s:%s", self.host, self.port)
+        self.logger.info("Server is listening on %s:%s", self.host, self.port)
 
     def connection_handler(self, address: tuple[str, int]) -> None:
         connecting_socket: socket.socket = socket.socket(
@@ -111,24 +114,23 @@ class Server:
         )
 
         try:
-            logging.info("Trying to connect to %s:%s...", address[0], address[1])
+            self.logger.info("Trying to connect to %s:%s...", address[0], address[1])
             connecting_socket.connect((address[0], address[1]))
 
             self.server_connection = connecting_socket
-            self.server_connection.sendall(f"{self.port}-".encode())
             self.send_asymmetric_public_key_to_server()
             key: str = self.server_connection.recv(self.asymmetric_bits * 16).decode()
 
             threading.Thread(target=self.receive_data_from_server).start()
-            logging.info("Connected with server")
+            self.logger.info("Connected with server")
 
             while True:
                 sc, sockname = self.server_socket.accept()
 
                 response = sc.recv(1024).decode()
 
-                if response == "Session":
-                    logging.info("Connected with session at %s", sockname)
+                if response == conn.SESSION_MESSAGE:
+                    self.logger.info("Connected with session at %s", sockname)
                     self.sessions.append(sc)
                     self.send_decrypted_symmetric_data_to_session(key, sc)
                     threading.Thread(
@@ -137,45 +139,47 @@ class Server:
 
         except ConnectionRefusedError:
             symmetric_key: np.ndarray = self.generate_symmetric_key()
-            logging.info("Failed to connect to: %s:%s", address[0], address[1])
-            logging.info("Waiting for server to connect...")
+            self.logger.info("Failed to connect to: %s:%s", address[0], address[1])
+            self.logger.info("Waiting for server to connect...")
 
             while True:
                 sc, sockname = self.server_socket.accept()
-                received = sc.recv(1024).decode()
-                response: list[str] = received.split("-")
-                if response[0] == str(address[1]):
-                    self.server_connection = sc
-                    logging.info("Connected with the server")
-                    self.send_encrypted_symmetric_key_to_server(
-                        symmetric_key, response[1],
-                    )
-                    threading.Thread(target=self.receive_data_from_server).start()
-                else:
-                    logging.info("Connected with session at %s", sockname)
+                response: list[str] = sc.recv(1024).decode()
+                if response == conn.SESSION_MESSAGE:
+                    self.logger.info("Connected with session at %s", sockname)
                     self.sessions.append(sc)
                     self.send_symmetric_data_to_session(symmetric_key, sc)
                     threading.Thread(
                         target=self.receive_data_from_session, args=(sc,),
                     ).start()
+                else:
+                    self.server_connection = sc
+                    response = json.loads(response)
+                    self.logger.info("Connected with the server")
+                    self.send_encrypted_symmetric_key_to_server(
+                        symmetric_key, response,
+                    )
+                    threading.Thread(target=self.receive_data_from_server).start()
 
     def send_asymmetric_public_key_to_server(self) -> None:
-        asymmetric_public_key = " ".join(
-            [
-                str(self.asymmetric_public_key[0]),
-                str(self.asymmetric_public_key[1]),
-                self.asymmetric_key_type,
-            ],
-        )
-        self.server_connection.sendall(asymmetric_public_key.encode())
+        asymmetric_public_key: list[str] = [
+            str(self.asymmetric_public_key[0]),
+            str(self.asymmetric_public_key[1]),
+        ]
+        data: dict = {
+            conn.SERVER_MESSAGE: f"{self.port}",
+            conn.ASYMMETRIC_KEY_TYPE_FIELD_NAME: self.asymmetric_key_type,
+            conn.ASYMMETRIC_PUBLIC_KEY_FIELD_NAME: asymmetric_public_key,
+            }
+        self.server_connection.sendall(json.dumps(data).encode())
 
     def send_encrypted_symmetric_key_to_server(
-        self, symmetric_key: np.ndarray, asymmetric_public_key: str,
+        self, symmetric_key: np.ndarray, data: dict[str, str | list[str]],
     ) -> None:
-        asymmetric_public_key: list[str] = asymmetric_public_key.split(" ")
+        asymmetric_public_key: list[str] = data[conn.ASYMMETRIC_PUBLIC_KEY_FIELD_NAME]
         e: int = int(asymmetric_public_key[0])
         n: int = int(asymmetric_public_key[1])
-        asymmetric_key_type = asymmetric_public_key[2]
+        asymmetric_key_type = data[conn.ASYMMETRIC_KEY_TYPE_FIELD_NAME]
         encrypted_symmetric_key: str = self.encrypt_symmetric_key(
             symmetric_key, (e, n), asymmetric_key_type,
         )
@@ -213,7 +217,7 @@ class Server:
                 if self.server_connection:
                     self.forward_data_to_server(message)
             except Exception:
-                logging.exception("An error occurred while receiving data from session")
+                self.logger.exception("An error occurred while receiving data from session")
                 self.sessions.remove(session)
                 session.close()
                 break
@@ -251,9 +255,9 @@ class Server:
     def forward_data_to_server(self, message: str) -> None:
         try:
             self.server_connection.send(message.encode())
-            logging.info("Forwarded message to connected server: %s", message)
+            self.logger.info("Forwarded message to connected server: %s", message)
         except Exception:
-            logging.exception("An error occurred forwarding a data to server")
+            self.logger.exception("An error occurred forwarding a data to server")
 
     def receive_data_from_server(self) -> None:
         while True:
@@ -262,10 +266,10 @@ class Server:
                     self.asymmetric_bits * 16,
                 ).decode()
                 if message:
-                    logging.info("Received from server: %s", message)
+                    self.logger.info("Received from server: %s", message)
                     self.broadcast_to_sessions(message, sender_session=None)
             except Exception as e:
-                logging.exception("An error occurred while receiving data from server: %s", exc_info=e)
+                self.logger.exception("An error occurred while receiving data from server: %s", exc_info=e)
                 self.server_connection.close()
                 break
 
@@ -277,10 +281,9 @@ class Server:
                 try:
                     session.send(message.encode())
                 except Exception as e:
-                    logging.exception("An error occurred while broadcasting to sessions: %s", exc_info=e)
+                    self.logger.exception("An error occurred while broadcasting to sessions: %s", exc_info=e)
                     self.sessions.remove(session)
                     session.close()
 
-
 if __name__ == "__main__":
-    server = Server(None)
+    Server(None, None, None)
