@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 
-from cryptography.src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
-from cryptography.src.service.session import Session
+from cryptography.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
+from cryptography.service.session import Session
 
 
 class TestSession:

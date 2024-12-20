@@ -1,6 +1,6 @@
 from math import gcd
 
-from cryptography.src.algebra.restrictions.group import Group
+from cryptography.algebra.restrictions.group import Group
 
 
 class Ring(Group):
@@ -11,7 +11,8 @@ class Ring(Group):
 
     def mult_inverse(self, value: int) -> int | None:
         if value is None:
-            raise ValueError("Value can't be None")
+            msg: str = "Value can't be None"
+            raise ValueError(msg)
         if value % self.mod == 0:
             return None
         if gcd(self.mod, value) != 1:
@@ -40,8 +41,7 @@ class Ring(Group):
         if value1 % self.mod == 0 or value2 % self.mod == 0:
             return None
         result: int = (value1 * value2) % self.mod
-        result = result + self.mod if result < 0 else result
-        return result
+        return result + self.mod if result < 0 else result
 
 
 if __name__ == "__main__":

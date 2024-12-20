@@ -2,8 +2,8 @@ import random
 
 import numpy as np
 
-from cryptography.src.data.aes_constants import inv_s_box, rcon, s_box
-from cryptography.src.keys.symmetric.symmetric import Symmetric
+from cryptography.data.aes_constants import inv_s_box, rcon, s_box
+from cryptography.keys.symmetric.symmetric import Symmetric
 
 
 class AES(Symmetric):
@@ -11,7 +11,8 @@ class AES(Symmetric):
         self, bits: int, aes_key: np.ndarray | list[str] | None = None,
     ) -> None:
         if bits not in [128, 192, 256]:
-            raise ValueError("Wrong bits key length")
+            msg: str = "Wrong bits key length"
+            raise ValueError(msg)
         self.key_columns: int = bits // 32
         self.rounds: int = {128: 10, 192: 12, 256: 14}[bits]
         if aes_key is not None:
@@ -27,7 +28,7 @@ class AES(Symmetric):
     def sub_word(self, word: np.ndarray) -> np.ndarray:
         return s_box[word // 16, word % 16]
 
-    def generate_key(self, bits) -> np.ndarray:
+    def generate_key(self, bits: int) -> np.ndarray:
         bytes_length: int = bits // 8
         hex_key: str = "".join(
             random.choice("0123456789abcdef") for _ in range(bytes_length * 2)
@@ -64,14 +65,13 @@ class AES(Symmetric):
         state: np.ndarray = byte_array.reshape(4, 4).T
         return state
 
-    def int_matrix_to_hex_matrix(self, matrix) -> np.ndarray:
-        hex_matrix = np.array([[f"{num:02x}" for num in row] for row in matrix])
-        return hex_matrix
+    def int_matrix_to_hex_matrix(self, matrix: np.ndarray) -> np.ndarray:
+        return np.array([[f"{num:02x}" for num in row] for row in matrix])
 
     def sub_bytes(self) -> None:
         self.state = s_box[self.state // 16, self.state % 16]
 
-    def shift_rows(self):
+    def shift_rows(self) -> None:
         for i in range(4):
             self.state[i] = np.roll(self.state[i], -i)
 
@@ -87,7 +87,7 @@ class AES(Symmetric):
             b >>= 1
         return p & 0xFF
 
-    def mix_columns(self):
+    def mix_columns(self) -> None:
         for i in range(4):
             col = self.state[:, i]
             self.state[:, i] = [
@@ -109,8 +109,8 @@ class AES(Symmetric):
                 ^ self.galois_mult(col[3], 2),
             ]
 
-    def add_round_key(self, round: int) -> None:
-        self.state ^= self.expanded_key[round * 4 : (round + 1) * 4].T
+    def add_round_key(self, rounds: int) -> None:
+        self.state ^= self.expanded_key[rounds * 4 : (rounds + 1) * 4].T
 
     def encrypt(self, message: str) -> str:
         padded_message = message.ljust((len(message) + 15) // 16 * 16)
@@ -121,11 +121,11 @@ class AES(Symmetric):
             self.state: np.ndarray = self.aes_state(block)
             self.add_round_key(0)
 
-            for round in range(1, self.rounds):
+            for iteration in range(1, self.rounds):
                 self.sub_bytes()
                 self.shift_rows()
                 self.mix_columns()
-                self.add_round_key(round)
+                self.add_round_key(iteration)
 
             self.sub_bytes()
             self.shift_rows()
@@ -178,10 +178,10 @@ class AES(Symmetric):
 
             self.add_round_key(self.rounds)
 
-            for round in range(self.rounds - 1, 0, -1):
+            for iteration in range(self.rounds - 1, 0, -1):
                 self.inv_shift_rows()
                 self.inv_sub_bytes()
-                self.add_round_key(round)
+                self.add_round_key(iteration)
                 self.inv_mix_columns()
 
             self.inv_shift_rows()
@@ -190,9 +190,7 @@ class AES(Symmetric):
 
             decrypted_text += "".join([chr(byte) for byte in self.state.T.flatten()])
 
-        decrypted_text = decrypted_text.rstrip()
-
-        return decrypted_text
+        return decrypted_text.rstrip()
 
     @property
     def key(self) -> np.ndarray:

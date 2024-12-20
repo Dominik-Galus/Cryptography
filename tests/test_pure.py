@@ -1,6 +1,6 @@
 import pytest
 
-from cryptography.src.algebra.pure import is_prime
+from cryptography.algebra.pure import is_prime
 
 
 class TestPure:

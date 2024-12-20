@@ -1,7 +1,7 @@
 from math import gcd
 from typing import Self
 
-from cryptography.src.algebra.restrictions.restriction import Restriction
+from cryptography.algebra.restrictions.restriction import Restriction
 
 
 class Number:
@@ -19,7 +19,8 @@ class Number:
             return Number(
                 self.restriction.add(self.value, other.value), self.restriction,
             )
-        raise ValueError("Numbers can be added only with the same restriction")
+        msg: str = "Numbers can be added only with the same restriction"
+        raise ValueError(msg)
 
     def __mul__(self, other: int | Self) -> Self:
         if type(other) is int:
@@ -31,7 +32,8 @@ class Number:
             return Number(
                 self.restriction.mul(self.value, other.value), self.restriction,
             )
-        raise ValueError("Numbers can be multiplied only with the same restriction")
+        msg: str = "Numbers can be multiplied only with the same restriction"
+        raise ValueError(msg)
 
     def gcd(self, number: int) -> int:
         return gcd(self.value, number)

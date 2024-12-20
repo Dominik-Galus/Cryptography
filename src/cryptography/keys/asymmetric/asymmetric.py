@@ -13,13 +13,13 @@ class Asymmetric(ABC):
 
     @staticmethod
     @abstractmethod
-    def encrypt_with_known_key(self, message: str, public_key: tuple[int, int]) -> str:
+    def encrypt_with_known_key(message: str, public_key: tuple[int, int]) -> str:
         pass
 
     @staticmethod
     @abstractmethod
     def decrypt_with_known_key(
-        self, encrypted_message: str, private_key: tuple[int, int],
+        encrypted_message: str, private_key: tuple[int, int],
     ) -> str:
         pass
 
@@ -35,5 +35,5 @@ class Asymmetric(ABC):
 
     @staticmethod
     @abstractmethod
-    def load_from_file(self, content: str) -> tuple[int, int]:
+    def load_from_file(content: str) -> tuple[int, int]:
         pass

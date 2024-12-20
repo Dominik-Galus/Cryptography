@@ -4,10 +4,10 @@ from random import randint
 def is_prime(value: int, k: int = 1000) -> bool:
     if value == 1:
         return False
-    if value == 2 or value == 3:
+    if value in (2, 3):
         return True
 
-    for i in range(k):
+    for _ in range(k):
         a = randint(2, value - 2)
         if pow(a, value - 1, value) != 1:
             return False

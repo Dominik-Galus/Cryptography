@@ -1,11 +1,13 @@
-from cryptography.src.keys.asymmetric.asymmetric import Asymmetric
-from cryptography.src.keys.asymmetric.rsa import RSA
-from cryptography.src.keys.factories.keyfactory import KeyFactory
+from typing import ClassVar
+
+from cryptography.keys.asymmetric.asymmetric import Asymmetric
+from cryptography.keys.asymmetric.rsa import RSA
+from cryptography.keys.factories.keyfactory import KeyFactory
 
 
 class AsymmetricKeyFactory(KeyFactory):
 
-    key_type_map: dict[str, Asymmetric] = {
+    key_type_map: ClassVar[dict[str, type[Asymmetric]]] = {
         "RSA": RSA,
     }
 
@@ -14,13 +16,15 @@ class AsymmetricKeyFactory(KeyFactory):
         if key_type in AsymmetricKeyFactory.key_type_map:
             asymmetric_key = AsymmetricKeyFactory.key_type_map[key_type]
             return asymmetric_key(bits)
-        raise TypeError("Invalid Asymmetric Key")
+        msg: int = "Invalid Asymmetric Key"
+        raise TypeError(msg)
 
     @staticmethod
-    def get_key(key_type: str):
+    def get_key(key_type: str) -> type[Asymmetric]:
         if key_type in AsymmetricKeyFactory.key_type_map:
             return AsymmetricKeyFactory.key_type_map[key_type]
-        raise TypeError("Invallid Asymmetric Key")
+        msg: str = "Invallid Asymmetric Key"
+        raise TypeError(msg)
 
 
 if __name__ == "__main__":

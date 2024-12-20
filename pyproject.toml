@@ -13,10 +13,16 @@ readme = "README.md"
 requires-python = ">=3.11.2"
 dependencies = [
     "numpy==2.0.1",
+    "pydantic==2.10.4",
+    "click==8.1.7",
 ]
 
 [project.scripts]
 key-gen = "cryptography.cli.key_gen:generate_key_to_file"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
 
 [project.urls]
 Homepage = "https://github.com/Dominik-Galus/cryptography"
@@ -24,7 +30,24 @@ Repository = "https://github.com/Dominik-Galus/cryptography/"
 Issues = "https://github.com/Dominik-Galus/cryptography/issues"
 
 [tool.ruff]
-select = ["ALL"]
+lint.select = ["ALL", "E302"]
+line-length=120
+lint.ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D107",
+    "N818",
+    "D213",  # ignore rules causing conflicts
+    "D211",
+    "S311",
+    "FIX002",
+    "TD003",
+    "CPY001",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

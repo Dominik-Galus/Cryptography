@@ -3,9 +3,9 @@ from unittest.mock import MagicMock, mock_open, patch
 import numpy as np
 import pytest
 
-from cryptography.src.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
-from cryptography.src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
-from cryptography.src.service.server import Server
+from cryptography.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
+from cryptography.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
+from cryptography.service.server import Server
 
 
 class TestServer:

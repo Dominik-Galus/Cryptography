@@ -11,7 +11,7 @@ services:
     tty: true
     stdin_open: true
     ports:
-      - "55555:55555"
+      - "55560:55560"
 
   server2:
     build:
@@ -23,7 +23,7 @@ services:
     tty: true
     stdin_open: true
     ports:
-      - "55556:55556"
+      - "55561:55561"
 
   client1:
     build:

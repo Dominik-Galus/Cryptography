@@ -1,5 +1,7 @@
-from cryptography.src.service.server import Server
 import time
+
+from cryptography.service.server import Server
+
 if __name__ == "__main__":
     server = Server(
         address=("0.0.0.0", 55561),

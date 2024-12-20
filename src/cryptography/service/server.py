@@ -1,13 +1,16 @@
 import pathlib
 import socket
 import threading
+from typing import TYPE_CHECKING
 
 import numpy as np
 
-from cryptography.src.keys.asymmetric.asymmetric import Asymmetric
-from cryptography.src.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
-from cryptography.src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
-from cryptography.src.keys.symmetric.symmetric import Symmetric
+from cryptography.keys.factories.asymmetrickeyfactory import AsymmetricKeyFactory
+from cryptography.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
+
+if TYPE_CHECKING:
+    from cryptography.keys.asymmetric.asymmetric import Asymmetric
+    from cryptography.keys.symmetric.symmetric import Symmetric
 
 
 class Server:
@@ -65,13 +68,15 @@ class Server:
             f"{path_to_key}/public_key.txt",
             )
         ).exists():
-            raise FileNotFoundError("Public key file not found")
+            msg: str = "Public key file not found"
+            raise FileNotFoundError(msg)
         if not (
             path_to_private := pathlib.Path(
                 f"{path_to_key}/private_key.txt",
             )
         ).exists():
-            raise FileNotFoundError("Private key file not found")
+            msg: str = "Private key file not found"
+            raise FileNotFoundError(msg)
 
         with open(path_to_public) as key_file:
             self.asymmetric_public_key = asymmetric_key.load_from_file(
@@ -170,7 +175,7 @@ class Server:
         self,
         symmetric_key: np.ndarray,
         asymmetric_public_key: tuple[int, int],
-        asymmetric_key_type,
+        asymmetric_key_type: str,
     ) -> str:
         other_public_asymmetric_key, other_n = asymmetric_public_key
 
@@ -192,7 +197,8 @@ class Server:
             try:
                 message = session.recv(self.asymmetric_bits * 16).decode()
                 if not message:
-                    raise ConnectionResetError("Session disconnected")
+                    msg: str = "Session disconnected"
+                    raise ConnectionResetError(msg)
                 if self.server_connection:
                     self.forward_data_to_server(message)
             except ConnectionResetError as e:
@@ -231,7 +237,7 @@ class Server:
 
         session.send(symmetric_data.encode())
 
-    def forward_data_to_server(self, message) -> None:
+    def forward_data_to_server(self, message: str) -> None:
         try:
             self.server_connection.send(message.encode())
             print(f"Forwarded message to connected server: {message}")

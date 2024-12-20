@@ -1,10 +1,10 @@
 from math import lcm
 from random import randrange
 
-from cryptography.src.algebra.number import Number
-from cryptography.src.algebra.pure import is_prime
-from cryptography.src.algebra.restrictions.ring import Ring
-from cryptography.src.keys.asymmetric.asymmetric import Asymmetric
+from cryptography.algebra.number import Number
+from cryptography.algebra.pure import is_prime
+from cryptography.algebra.restrictions.ring import Ring
+from cryptography.keys.asymmetric.asymmetric import Asymmetric
 
 
 class RSA(Asymmetric):
@@ -16,8 +16,7 @@ class RSA(Asymmetric):
     def encrypt(self, message: str) -> str:
         e, n = self.public_key
         cipher = [pow(ord(char), e, n) for char in message]
-        encrypted_message = "".join([str(num).zfill(len(str(n))) for num in cipher])
-        return encrypted_message
+        return "".join([str(num).zfill(len(str(n))) for num in cipher])
 
     def decrypt(self, encrypted_message: str) -> str:
         d, n = self.private_key
@@ -94,9 +93,11 @@ class RSA(Asymmetric):
 
     @staticmethod
     def load_from_file(content: str) -> tuple[int, int]:
+        limit_key_size: int = 2
         keys: list[str] = content.split()
-        if len(keys) != 2:
-            raise Exception("Too much content in file")
+        if len(keys) != limit_key_size:
+            msg: str = "Too much content in file"
+            raise IndexError(msg)
         return (int(keys[0]), int(keys[1]))
 
 

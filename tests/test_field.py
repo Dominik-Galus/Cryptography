@@ -1,6 +1,6 @@
 import pytest
 
-from cryptography.src.algebra.restrictions.field import Field
+from cryptography.algebra.restrictions.field import Field
 
 
 class TestField:

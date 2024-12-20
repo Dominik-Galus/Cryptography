@@ -1,9 +1,12 @@
 import socket
 import threading
 import time
+from typing import TYPE_CHECKING
 
-from cryptography.src.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
-from cryptography.src.keys.symmetric.symmetric import Symmetric
+from cryptography.keys.factories.symmetrickeyfactory import SymmetricKeyFactory
+
+if TYPE_CHECKING:
+    from cryptography.keys.symmetric.symmetric import Symmetric
 
 
 class Session:
@@ -60,7 +63,8 @@ class Session:
                 message: str = input("")
                 message = self.encrypt_data(message)
                 if not message:
-                    raise ConnectionResetError("Session input closed")
+                    msg: str = "Session input closed"
+                    raise ConnectionResetError(msg)
 
                 self.session_socket.send(message.encode())
             except Exception as e:
@@ -74,7 +78,8 @@ class Session:
                 message: str = self.session_socket.recv(20000).decode()
                 message = self.decrypt_data(message)
                 if not message:
-                    raise ConnectionResetError("Server disconnected")
+                    msg: str = "Server disconnected"
+                    raise ConnectionResetError(msg)
 
                 print(f"Guest: {message}")
             except:
